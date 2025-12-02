@@ -1,0 +1,62 @@
+{
+  "score": 476,
+  "base_score": 476,
+  "structure_penalty": 0,
+  "components": {
+    "ambition": {
+      "score": 60,
+      "description": "Grid size: 5 x 12 = 60 points",
+      "details": {
+        "rows": 5,
+        "cols": 12
+      }
+    },
+    "progress": {
+      "score": 56,
+      "description": "28 reachable tiles x 2 points each",
+      "details": {
+        "reachable_tiles": 28
+      }
+    },
+    "objectives": {
+      "score": 150,
+      "description": "Objectives found on valid path",
+      "details": {
+        "key_found": true,
+        "door_found": true,
+        "end_found": true
+      }
+    },
+    "proximity": {
+      "score": 150,
+      "description": "Partial credit for unreachable objectives",
+      "details": {
+        "key_proximity": 50,
+        "door_proximity": 50,
+        "end_proximity": 50
+      }
+    },
+    "danger": {
+      "score": 60,
+      "description": "3 traps adjacent to valid path x 20 points",
+      "details": {
+        "adjacent_traps": 3
+      }
+    }
+  },
+  "penalties": {},
+  "maze_info": {
+    "dimensions": "5x12",
+    "elements": {
+      "S": 1,
+      "E": 1,
+      "K": 1,
+      "D": 1,
+      "T": 3,
+      "#": 14,
+      " ": 26
+    },
+    "solvable": true,
+    "complexity_ratio": 1.0
+  }
+}

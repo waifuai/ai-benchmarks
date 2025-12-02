@@ -1,0 +1,10 @@
+Here is my maze design for the Gauntlet Benchmark:
+
+```markdown
+S  T   ##  T
+ #  # #   #  
+ #  K # # D  
+ #  # # # #  
+     T   E  
+```
+This maze demonstrates strategic trap placement and logical progression from Start to Key to Door to End.
