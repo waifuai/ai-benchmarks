@@ -14,16 +14,6 @@ Most maze benchmarks are binary (Pass/Fail). This is a **Gradient Benchmark** th
 - **Logic**: Proper S → K → D → E path progression  
 - **Danger**: Strategic trap placement adjacent to valid paths
 
-## 🏆 Leaderboard
-
-| Rank | Model | Score | Date | Notes |
-|------|-------|-------|------|-------|
-| 1 | - | - | - | Waiting for submissions |
-| 2 | - | - | - | |
-| 3 | - | - | - | |
-
-*Submit your results by running the benchmark and sharing your score!*
-
 ## 🚀 Quick Start
 
 ```bash
