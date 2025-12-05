@@ -4,6 +4,59 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.0] - 2025-12-05
+
+### Added
+- **Strategic Maze Elements**: Complete overhaul adding 5 new strategic maze mechanics
+  - **Teleporters** ('O'/'Q'): Single-use quick travel for strategic routing (+15 pts each, max 60)
+  - **Switches** ('s'): Toggle gates ('S') for dynamic path changes (+20 pts each, max 80)
+  - **Movable Blocks** ('B'): Push to create bridges/barriers (innovation bonus)
+  - **Bonus Exits** ('F','G','H'): Optional objectives (+75 points each)
+  - **Conditional Doors** ('X','Y','Z'): Complex unlock requirements (+30 pts each)
+- **Enhanced Scoring System**: Expanded from 5 to 8 scoring components
+  - **Strategic Innovation**: Rewards creative use of strategic elements (0-100 pts)
+  - **Route Complexity**: Multiple solution paths analysis (0-150 pts)
+  - **Bonus Objectives**: Optional challenge completion (0-75 pts)
+  - **Reduced trap importance**: Max 30 points vs unlimited before
+- **Strategic Pathfinder**: Advanced pathfinding algorithm handling stateful elements
+  - Multi-dimensional state tracking (keys, switches, teleport usage)
+  - Innovation analysis detecting creative strategic element usage
+  - Timeout protection for complex maze solving
+- **Enhanced Documentation**: Updated prompt.md to guide models toward strategic thinking
+
+### Changed
+- **Scoring Focus**: Shifted from trap-spamming to strategic puzzle-solving
+  - Typical scores increased from 200-400 to 800+ for quality strategic mazes
+  - Quality over quantity approach for all maze elements
+- **Maze Evaluation**: Complete rewrite of `strategic_evaluator.py`
+  - StrategicMaze class for intelligent element analysis
+  - Enhanced pathfinding with stateful movement logic
+  - Innovation detection and creative usage scoring
+- **CLI Output**: Updated to reflect new scoring components and strategic analysis
+  - Strategic elements breakdown in results
+  - Innovation details and unique strategies
+  - Enhanced maze analysis with complexity metrics
+
+### Fixed
+- **Route Complexity Analysis**: Resolved unpacking error in strategic element counting
+- **Pathfinding State Management**: Fixed teleporter and switch state tracking
+- **Innovation Scoring**: Corrected strategic element usage detection
+- **Performance Issues**: Optimized complex maze solving with proper timeout handling
+
+### Improved
+- **AI Model Challenge**: Higher intelligence ceiling for advanced models
+- **Maze Variety**: Eliminates repetitive trap-filling strategies
+- **Strategic Depth**: Multiple solution paths rewarded over single approaches
+- **Benchmark Quality**: True spatial reasoning assessment vs basic maze completion
+
+### Tested
+- **Performance Validation**: Sample strategic maze scored 871.69 points
+  - Strategic Innovation: 70 points (teleporter + switch usage)
+  - Route Complexity: 76 points (strategic element integration)
+  - Quality Focus: Strategic placement prioritized over trap quantity
+- **System Reliability**: Robust handling of complex strategic element interactions
+- **Backward Compatibility**: Legacy maze evaluation maintained through grade_maze() wrapper
+
 ## [0.4.1]
 
 ### Added

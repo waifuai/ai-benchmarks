@@ -17,7 +17,7 @@ from typing import List, Tuple, Dict, Set, Optional
 MAX_ROWS = 32
 MAX_COLS = 32
 MAX_CELLS = MAX_ROWS * MAX_COLS
-VALID_MAZE_CHARS = {'#', 'S', 'E', 'K', 'D', 'T'} | set(chr(i) for i in range(ord('a'), ord('z') + 1)) | set(chr(i) for i in range(ord('A'), ord('Z') + 1))
+VALID_MAZE_CHARS = {'#', 'S', 'E', 'K', 'D', 'T', 'O', 'Q', 's', 'B', 'F', 'G', 'H', 'X', 'Y', 'Z'} | set(chr(i) for i in range(ord('a'), ord('z') + 1)) | set(chr(i) for i in range(ord('A'), ord('Z') + 1))
 
 
 class MazeParsingError(Exception):

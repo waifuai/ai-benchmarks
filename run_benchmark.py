@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 from tqdm import tqdm
 from benchmarks.maze.evaluator import grade_maze
+from benchmarks.maze.strategic_evaluator import grade_strategic_maze
 
 
 def read_llm_output(file_path: str) -> str:
@@ -33,7 +34,7 @@ def format_score_report(result: dict) -> str:
     structure_penalty = result.get("structure_penalty", 0)
     
     report = []
-    report.append("[RESULTS] MAZE GAUNTLET BENCHMARK")
+    report.append("[RESULTS] STRATEGIC MAZE BENCHMARK")
     report.append("=" * 40)
     report.append(f"Total Score: {score} points")
     report.append(f"Base Score: {base_score} points")
@@ -69,10 +70,15 @@ def format_score_report(result: dict) -> str:
     report.append(f"Solvable: {'Yes' if solvable else 'No'}")
     report.append(f"Complexity Ratio: {complexity:.2f}")
     
+    # Show strategic elements if present
+    strategic_elements = maze_info.get("strategic_elements", {})
+    if strategic_elements:
+        report.append(f"Strategic Elements: {strategic_elements}")
+    
     if structure_penalty != 0:
         report.append("")
         report.append("[WARNING] This maze violates the structure constraint!")
-        report.append("         Traps must not outnumber walls.")
+        report.append("         Traps must not significantly outnumber walls.")
     
     return "\\n".join(report)
 
@@ -140,7 +146,7 @@ def rescore_all_outputs(benchmark: str):
             
             # Grade
             if benchmark == "maze":
-                result = grade_maze(llm_output)
+                result = grade_strategic_maze(llm_output)
             else:
                 continue
                 
@@ -243,7 +249,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
                 
             # Grade
             if benchmark == "maze":
-                result = grade_maze(llm_output)
+                result = grade_strategic_maze(llm_output)
             else:
                 raise ValueError(f"Unknown benchmark: {benchmark}")
                 
@@ -281,7 +287,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
 def main():
     """Main CLI function."""
     parser = argparse.ArgumentParser(
-        description="AI Benchmark - Spatial Reasoning Evaluation",
+        description="AI Benchmark - Strategic Spatial Reasoning Evaluation",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -326,8 +332,8 @@ Examples:
         llm_output = read_llm_output(args.input)
         
         if args.benchmark == "maze":
-            print("[RUNNING] Maze Gauntlet benchmark...")
-            result = grade_maze(llm_output)
+            print("[RUNNING] Strategic Maze benchmark...")
+            result = grade_strategic_maze(llm_output)
         else:
             raise ValueError(f"Unknown benchmark: {args.benchmark}")
         
