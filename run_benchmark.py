@@ -335,6 +335,112 @@ def rescore_all_outputs(benchmark: str):
     show_leaderboard(benchmark)
 
 
+def ingest_manual_output(file_path: str, benchmark: str):
+    """Ingest a manual output file and update the system."""
+    from leaderboard import Leaderboard
+    import re
+    
+    path = Path(file_path)
+    if not path.exists():
+        print(f"[ERROR] Ingest file not found: {file_path}")
+        return
+        
+
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            content = f.read()
+            
+        if not content:
+            print("[ERROR] Empty ingest file")
+            return
+            
+        # Split content by "model:" (case-insensitive) to find blocks
+        # We need to keep the delimiter to know where blocks start
+        # Regex lookahead to split but keep delimiter is tricky with split, 
+        # easier to finditer.
+        
+        # Regex to find model headers: start of line, "model:" or "MODEL:", capture rest of line
+        model_header_pattern = re.compile(r'(?m)^(?:model|MODEL):\s*(.+)$')
+        
+        matches = list(model_header_pattern.finditer(content))
+        
+        if not matches:
+             print("[ERROR] No 'model: <name>' headers found.")
+             return
+             
+        print(f"[INGEST] Found {len(matches)} model entries in {file_path}")
+        
+        for i, match in enumerate(matches):
+            model_name = match.group(1).strip()
+            start_pos = match.end()
+            
+            # End position is the start of the next match, or end of file
+            end_pos = matches[i+1].start() if i + 1 < len(matches) else len(content)
+            
+            block_content = content[start_pos:end_pos]
+            
+            # Extract time if present
+            time_match = re.search(r'(?m)^(?:time|TIME):\s*([\d\.]+)', block_content)
+            elapsed_seconds = 0.0
+            if time_match:
+                try:
+                    elapsed_seconds = float(time_match.group(1))
+                except ValueError:
+                    pass
+            
+            # The rest is the maze content. We need to strip "time:" line and optional "maze:" label if present
+            # Actually, simpler to just treat everything else as potential maze content
+            # The evaluator is robust enough to extract maze from text.
+            llm_output = block_content
+            
+            # Save to output directory
+            safe_model_name = model_name.replace("/", "_").replace(":", "_")
+            output_dir = Path(__file__).parent / "output" / safe_model_name
+            output_dir.mkdir(parents=True, exist_ok=True)
+            
+            output_file = output_dir / f"{benchmark}.txt"
+            with open(output_file, 'w', encoding='utf-8') as f:
+                f.write(llm_output)
+                
+            print(f"  > Processing '{model_name}'...")
+                
+            # Grade
+            if benchmark == "maze":
+                result = grade_maze(llm_output)
+            else:
+                raise ValueError(f"Unknown benchmark: {benchmark}")
+                
+            result["model"] = model_name
+            result["elapsed_seconds"] = elapsed_seconds
+            result["token_usage"] = {"completion_tokens": 0, "prompt_tokens": 0, "total_tokens": 0}
+            
+            # Save score
+            score_file = output_dir / f"{benchmark}_score.json"
+            clean_result = {k: v for k, v in result.items() if k != "llm_response"}
+            with open(score_file, 'w', encoding='utf-8') as f:
+                json.dump(clean_result, f, indent=2)
+                
+            # Update leaderboard
+            lb = Leaderboard()
+            lb.add_result(
+                model_name,
+                benchmark,
+                result["score"],
+                {
+                    "token_usage": result["token_usage"],
+                    "elapsed_seconds": result["elapsed_seconds"]
+                }
+            )
+            
+            print(f"    - Score: {result['score']} (Time: {elapsed_seconds}s)")
+
+        print("\\n[SUCCESS] All entries processed and leaderboard updated.")
+        show_leaderboard(benchmark)
+        
+    except Exception as e:
+        print(f"[ERROR] Failed to ingest: {e}")
+
+
 def main():
     """Main CLI function."""
     parser = argparse.ArgumentParser(
@@ -360,8 +466,13 @@ Examples:
     parser.add_argument("--sequential", "-s", action="store_true", help="Run sequentially instead of parallel")
     parser.add_argument("--retries", type=int, default=1, help="Number of retries on empty output (default: 1)")
     parser.add_argument("--rescore", action="store_true", help="Re-score all existing mazes in output/ directory")
+    parser.add_argument("--ingest", help="Path to file for manual ingestion (Format: Line 1 'MODEL: name', rest is maze)")
     
     args = parser.parse_args()
+    
+    if args.ingest:
+        ingest_manual_output(args.ingest, args.benchmark)
+        return
     
     if args.rescore:
         rescore_all_outputs(args.benchmark)
