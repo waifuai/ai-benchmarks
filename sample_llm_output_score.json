@@ -1,62 +1,65 @@
 {
-  "score": 476,
-  "base_score": 476,
+  "score": 675.69,
+  "base_score": 675.69,
   "structure_penalty": 0,
   "components": {
     "ambition": {
-      "score": 60,
-      "description": "Grid size: 5 \u00d7 12 = 60 points",
+      "score": 590.69,
+      "description": "Grid 5x12 (size: 60) -> 100*log2",
       "details": {
         "rows": 5,
-        "cols": 12
+        "cols": 12,
+        "grid_size": 60
       }
     },
-    "progress": {
-      "score": 56,
-      "description": "28 reachable tiles \u00d7 2 points each",
+    "complexity": {
+      "score": 0,
+      "description": "0 Key/Door pairs solved x 50",
       "details": {
-        "reachable_tiles": 28
+        "keys_collected": [],
+        "path_length": 9
       }
     },
-    "objectives": {
-      "score": 150,
-      "description": "Objectives found on valid path",
+    "path_efficiency": {
+      "score": 15.0,
+      "description": "Optimal path uses 9/60 cells (15.0%)",
       "details": {
-        "key_found": true,
-        "door_found": true,
-        "end_found": true
+        "path_length": 9,
+        "grid_size": 60,
+        "efficiency_ratio": 0.15
       }
     },
-    "proximity": {
-      "score": 150,
-      "description": "Partial credit for unreachable objectives",
+    "completion": {
+      "score": 50,
+      "description": "Successfully reached End 'E'",
       "details": {
-        "key_proximity": 50,
-        "door_proximity": 50,
-        "end_proximity": 50
+        "solvable": true
       }
     },
     "danger": {
-      "score": 60,
-      "description": "3 traps adjacent to valid path \u00d7 20 points",
+      "score": 20.0,
+      "description": "1 strategic traps on solution path (sqrt scaled)",
       "details": {
-        "adjacent_traps": 3
+        "adjacent_traps": 1,
+        "scaling": "sqrt"
       }
     }
   },
-  "penalties": {},
   "maze_info": {
-    "dimensions": "5\u00d712",
+    "dimensions": "5x12",
+    "solvable": true,
+    "keys_collected": [],
+    "chain_length": 0,
+    "path_length": 9,
     "elements": {
       "S": 1,
       "E": 1,
       "K": 1,
       "D": 1,
       "T": 3,
-      "#": 14,
-      " ": 26
+      "#": 14
     },
-    "solvable": true,
-    "complexity_ratio": 1.0
+    "complexity_ratio": 0.283,
+    "timeout": false
   }
 }

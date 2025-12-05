@@ -4,6 +4,39 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.3.0] - 2025-12-05
+
+### Added
+- **Enhanced Maze Parsing & Validation**: Fixed regex extraction to handle various LLM output formats including metadata like "TIME: 275s"
+- **Comprehensive Error Handling**: Intelligent error messages with context-aware suggestions for parsing failures, size violations, missing elements, and timeouts
+- **Performance Optimization**: 5-second timeout protection for complex maze solving with iteration limits to prevent hanging
+- **Detailed Scoring Breakdowns**: Enhanced component breakdowns with comprehensive explanations for ambition, complexity, path efficiency, completion, and danger
+
+### Changed
+- **Scoring Calculations**: Verified all scoring components match documented behavior with maintained leaderboard integration
+- **CLI Output**: Rich output with component analysis, performance ratings, and actionable feedback
+- **Character Validation**: Resolved bugs and improved edge case handling for irregular row lengths and malformed maze detection
+- **System Safety**: Implemented comprehensive error tracking and debugging information while maintaining existing progress indicators
+
+### Fixed
+- **Regex Extraction**: Fixed handling of various LLM output formats and metadata
+- **Size Validation**: Enhanced 32x32 constraint validation with clear error messages
+- **BFS Algorithms**: Optimized algorithms with iteration limits to prevent hanging
+- **Error Handling**: Fixed missing element detection and timeout handling
+
+### Improved
+- **User Experience**: Clear error messages with specific improvement suggestions
+- **Parsing Reliability**: Handles diverse LLM output formats without failure
+- **Scoring Accuracy**: Calculations verified against benchmark specifications
+- **System Reliability**: Robust handling of metadata, edge cases, and malformed inputs
+
+### Verified
+- **Sample Processing**: Successfully scores complex mazes (e.g., 675.69 points with full breakdown)
+- **Error Handling**: Properly rejects violations (e.g., 34x32 maze > 32x32 limit) with helpful suggestions
+- **CLI Enhancement**: Rich output with component analysis, performance ratings, and actionable feedback
+- **System Compatibility**: Re-scored existing mazes ensuring calculation consistency
+- **Real-world Testing**: Parsing tested with real-world LLM output variations
+
 ## [0.2.3] - 2025-12-05
 
 ### Added
