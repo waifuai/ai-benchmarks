@@ -91,6 +91,27 @@ def bfs_reachable(grid: List[str], start: Tuple[int, int]) -> Set[Tuple[int, int
     return reachable
 
 
+def bfs_reachable_from_set(grid: List[str], start_set: Set[Tuple[int, int]], target: Tuple[int, int]) -> Set[Tuple[int, int]]:
+    """Calculate reachability from a set of starting positions to a target."""
+    if target in start_set:
+        return bfs_reachable(grid, target)
+    
+    # Find closest reachable position to target
+    min_dist = float('inf')
+    closest_start = None
+    
+    for start in start_set:
+        dist = abs(start[0] - target[0]) + abs(start[1] - target[1])
+        if dist < min_dist:
+            min_dist = dist
+            closest_start = start
+    
+    if closest_start:
+        return bfs_reachable(grid, closest_start)
+    
+    return set()
+
+
 def get_valid_path(grid: List[str], start: Tuple[int, int]) -> Set[Tuple[int, int]]:
     """
     Calculate the valid path through the maze following S -> K -> D -> E sequence.
@@ -140,27 +161,6 @@ def get_valid_path(grid: List[str], start: Tuple[int, int]) -> Set[Tuple[int, in
     return d_reachable
 
 
-def bfs_reachable_from_set(grid: List[str], start_set: Set[Tuple[int, int]], target: Tuple[int, int]) -> Set[Tuple[int, int]]:
-    """Calculate reachability from a set of starting positions to a target."""
-    if target in start_set:
-        return bfs_reachable(grid, target)
-    
-    # Find closest reachable position to target
-    min_dist = float('inf')
-    closest_start = None
-    
-    for start in start_set:
-        dist = abs(start[0] - target[0]) + abs(start[1] - target[1])
-        if dist < min_dist:
-            min_dist = dist
-            closest_start = start
-    
-    if closest_start:
-        return bfs_reachable(grid, closest_start)
-    
-    return set()
-
-
 def calculate_proximity_bonus(grid: List[str], reachable: Set[Tuple[int, int]], target: str) -> float:
     """Calculate proximity bonus for unreachable objectives."""
     target_pos = find_position(grid, target)
@@ -179,9 +179,9 @@ def calculate_proximity_bonus(grid: List[str], reachable: Set[Tuple[int, int]], 
     if min_dist == float('inf'):
         return 0
     
-    # Proximity bonus decreases with distance
-    max_bonus = 50
-    return max(0, max_bonus * (1 - min_dist / 20))  # Linear decrease over 20 steps
+    # Proximity bonus: 50 points - (distance * 5)
+    # Max distance for any bonus is 10 (50 - 10*5 = 0)
+    return max(0, 50 - (min_dist * 5))
 
 
 def count_adjacent_traps(grid: List[str], valid_path: Set[Tuple[int, int]]) -> int:
@@ -214,6 +214,15 @@ def grade_maze(maze_text: str) -> Dict:
             return {"error": "No valid maze found", "score": 0}
         
         rows, cols = len(grid), len(grid[0]) if grid else 0
+        
+        # Check size limit
+        MAX_ROWS = 32
+        MAX_COLS = 32
+        if rows > MAX_ROWS or cols > MAX_COLS:
+            return {
+                "error": f"Maze size {rows}x{cols} exceeds limit of {MAX_ROWS}x{MAX_COLS}", 
+                "score": 0
+            }
         
         # Count elements
         counts = count_elements(grid)
@@ -338,7 +347,7 @@ if __name__ == "__main__":
      # # #  
      # K #  
      # # #  
-      D   E
+     D   E
     ```
     """
     

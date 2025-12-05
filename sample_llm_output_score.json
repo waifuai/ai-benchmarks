@@ -5,7 +5,7 @@
   "components": {
     "ambition": {
       "score": 60,
-      "description": "Grid size: 5 x 12 = 60 points",
+      "description": "Grid size: 5 \u00d7 12 = 60 points",
       "details": {
         "rows": 5,
         "cols": 12
@@ -13,7 +13,7 @@
     },
     "progress": {
       "score": 56,
-      "description": "28 reachable tiles x 2 points each",
+      "description": "28 reachable tiles \u00d7 2 points each",
       "details": {
         "reachable_tiles": 28
       }
@@ -38,7 +38,7 @@
     },
     "danger": {
       "score": 60,
-      "description": "3 traps adjacent to valid path x 20 points",
+      "description": "3 traps adjacent to valid path \u00d7 20 points",
       "details": {
         "adjacent_traps": 3
       }
@@ -46,7 +46,7 @@
   },
   "penalties": {},
   "maze_info": {
-    "dimensions": "5x12",
+    "dimensions": "5\u00d712",
     "elements": {
       "S": 1,
       "E": 1,
