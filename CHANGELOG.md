@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.2] - 2025-12-05
+
+### Added
+- **Multi-Key Maze Logic**: Support for alphabet-based keys (`a`-`z`) and doors (`A`-`Z`).
+  - New scoring component: **Complexity (Chain Length)** based on sequential key/door pairs solved.
+  - New scoring component: **Path Efficiency** (Length / Grid Size).
+  - Updated `prompt.md` to instruct LLMs on the new multi-key rules.
+- **Rescore Feature**: Added `--rescore` flag to `run_benchmark.py` to re-evaluate all existing outputs in `output/` directory without re-running models.
+- `test_multikey.py`: Test suite for validating the new multi-key maze logic and scoring.
+
+### Changed
+- **OpenRouter Integration**: Improved response parsing to robustly handle usage statistics (prompt/completion/total tokens).
+- **Maze Evaluator**: 
+  - Overhauled scoring formula to prioritize logical chain completion.
+  - Adjusted **Danger** score to use diminishing returns (sqrt) for adjacent traps.
+  - Fixed `ZeroDivisionError` in complexity ratio calculation.
+
 ## [0.2.1] - 2025-12-05
 
 ### Added

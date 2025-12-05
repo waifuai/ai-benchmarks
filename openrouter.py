@@ -6,6 +6,8 @@ Handles communication with OpenRouter API for LLM benchmarking.
 
 import os
 import requests
+import time
+
 from pathlib import Path
 from typing import Optional, Dict, Any
 
@@ -83,45 +85,63 @@ class OpenRouterClient:
             "temperature": temperature
         }
         
-        try:
-            response = requests.post(
-                url, 
-                headers=self._get_headers(),
-                json=payload,
-                timeout=120  # 2 minute timeout for slow models
-            )
-            response.raise_for_status()
+        # Backoff parameters
+        retries = 0
+        max_retries = 5
+        base_delay = 10
+        max_delay = 120
+
+        while True:
+            try:
+                response = requests.post(
+                    url, 
+                    headers=self._get_headers(),
+                    json=payload,
+                    timeout=120  # 2 minute timeout for slow models
+                )
+                response.raise_for_status()
+                break  # Success, exit loop
+                
+            except requests.exceptions.HTTPError as e:
+                is_rate_limit = (e.response.status_code == 429)
+                is_server_error = (e.response.status_code >= 500)
+                
+                if (is_rate_limit or is_server_error) and retries < max_retries:
+                    retries += 1
+                    delay = min(base_delay * (2 ** (retries - 1)), max_delay)
+                    error_type = "Rate limit" if is_rate_limit else f"Server error {e.response.status_code}"
+                    print(f"[{error_type}] Retrying in {delay}s... (Attempt {retries}/{max_retries})")
+                    time.sleep(delay)
+                    continue
+                else:
+                    # Reraise if not retryable or retries exhausted
+                    if e.response.status_code == 401:
+                        raise ValueError("Invalid OpenRouter API key")
+                    elif e.response.status_code == 429:
+                        raise RuntimeError("Rate limit exceeded. Please wait and try again.")
+                    elif e.response.status_code == 400:
+                        error_msg = e.response.json().get("error", {}).get("message", str(e))
+                        raise ValueError(f"Bad request: {error_msg}")
+                    else:
+                        raise RuntimeError(f"API error: {e}")
+
             
-            data = response.json()
+        data = response.json()
             
-            # Extract the content from the response
-            content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
-            usage = data.get("usage", {})
-            
-            return {
-                "content": content,
-                "usage": {
-                    "prompt_tokens": usage.get("prompt_tokens", 0),
-                    "completion_tokens": usage.get("completion_tokens", 0),
-                    "total_tokens": usage.get("total_tokens", 0)
-                },
-                "model": data.get("model", model)
-            }
-            
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 401:
-                raise ValueError("Invalid OpenRouter API key")
-            elif e.response.status_code == 429:
-                raise RuntimeError("Rate limit exceeded. Please wait and try again.")
-            elif e.response.status_code == 400:
-                error_msg = e.response.json().get("error", {}).get("message", str(e))
-                raise ValueError(f"Bad request: {error_msg}")
-            else:
-                raise RuntimeError(f"API error: {e}")
-        except requests.exceptions.Timeout:
-            raise RuntimeError("Request timed out. The model may be slow or unavailable.")
-        except requests.exceptions.RequestException as e:
-            raise RuntimeError(f"Network error: {e}")
+        # Extract the content from the response
+        content = data.get("choices", [{}])[0].get("message", {}).get("content", "")
+        usage = data.get("usage", {})
+        
+        return {
+            "content": content,
+            "usage": {
+                "prompt_tokens": usage.get("prompt_tokens", 0),
+                "completion_tokens": usage.get("completion_tokens", 0),
+                "total_tokens": usage.get("total_tokens", 0)
+            },
+            "model": data.get("model", model)
+        }
+
     
     def list_models(self) -> list:
         """

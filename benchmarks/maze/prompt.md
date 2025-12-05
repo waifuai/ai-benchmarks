@@ -2,21 +2,23 @@ You are an Architect AI in the "Gauntlet Maze Benchmark."
 Your task is to generate a SINGLE ASCII maze that maximizes a continuous score based on structure, logic, and danger.
 
 **The Scoring Rules:**
-You are an Architect AI in the "Gauntlet Maze Benchmark."
-Your task is to generate a SINGLE ASCII maze that maximizes a continuous score based on structure, logic, and danger.
+1.  **Ambition:** Points for Grid Size (scale: `100 * log2(Rows * Cols)`).
+2.  **Complexity (Chain Length):** +50 Points for every **Key/Door Pair** solved in sequence. (Key `a` opens Door `A`, Key `b` opens Door `B`...).
+3.  **Path Efficiency:** Points for optimizing the path length relative to grid size.
+4.  **Danger:** Points for Traps ('T') adjacent to the valid path (diminishing returns).
+5.  **Completion:** +50 Points for reaching End ('E').
 
-**The Scoring Rules:**
-1.  **Ambition:** Points for Grid Size (Rows × Cols).
-2.  **Complexity:** Points for the length of the valid path.
-3.  **Danger:** +20 points for every Trap ('T') that is **immediately adjacent** to the valid path. (Traps not near the path are worth 0).
-4.  **Objectives:** +50 each for reaching Key ('K'), Door ('D'), and End ('E').
+**The Logic (Multi-Key Lock System):**
+-   **Keys:** Lowercase letters (`a`, `b`, `c`...).
+-   **Doors:** Uppercase letters (`A`, `B`, `C`...).
+-   **Rule:** You CANNOT pass a Door (e.g., `A`) until you have collected its matching Key (`a`).
+-   **Goal:** Create a maze that requires collecting multiple keys in a logical order to reach the End.
 
-**Strict Constraints (Violating these reduces score significantly):**
--   **Structure:** Walls ('#') must outnumber Traps ('T'). You cannot build walls out of traps.
--   **Size:** The maze must not exceed 32x32.
--   **Logic:** The path must go S -> K -> D -> E.
--   **Solvability:** The maze *should* be solvable. (Partial credit is given for partial paths).
+**Strict Constraints:**
+-   **Structure:** Walls ('#') must outnumber Traps ('T').
+-   **Size:** Max 32x32.
+-   **Solvability:** The maze MUST be solvable from 'S' to 'E'.
 
 **Output Format:**
 -   ONLY the maze grid in a markdown code block.
--   Use standard chars: '#', ' ', 'S', 'E', 'K', 'D', 'T'.
+-   Valid chars: '#', ' ', 'S', 'E', 'T', 'a'-'z', 'A'-'Z'.

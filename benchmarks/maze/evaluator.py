@@ -112,78 +112,6 @@ def bfs_reachable_from_set(grid: List[str], start_set: Set[Tuple[int, int]], tar
     return set()
 
 
-def get_valid_path(grid: List[str], start: Tuple[int, int]) -> Set[Tuple[int, int]]:
-    """
-    Calculate the valid path through the maze following S -> K -> D -> E sequence.
-    Returns set of positions that form the valid path.
-    """
-    if start == (-1, -1):
-        return set()
-    
-    # Find positions of all objectives
-    s_pos = start
-    k_pos = find_position(grid, 'K')
-    d_pos = find_position(grid, 'D')
-    e_pos = find_position(grid, 'E')
-    
-    # Calculate reachability from each objective
-    s_reachable = bfs_reachable(grid, s_pos)
-    
-    # Check if K is reachable from S
-    if k_pos not in s_reachable and k_pos != (-1, -1):
-        # K is not reachable, return S's reachable area
-        return s_reachable
-    
-    # If K is reachable, find path to K
-    k_reachable = s_reachable
-    if k_pos != (-1, -1):
-        k_reachable = bfs_reachable_from_set(grid, s_reachable, k_pos)
-    
-    # Check if D is reachable from K
-    if d_pos not in k_reachable and d_pos != (-1, -1):
-        # D is not reachable, return K's reachable area
-        return k_reachable
-    
-    # If D is reachable, find path to D
-    d_reachable = k_reachable
-    if d_pos != (-1, -1):
-        d_reachable = bfs_reachable_from_set(grid, k_reachable, d_pos)
-    
-    # Check if E is reachable from D
-    if e_pos not in d_reachable and e_pos != (-1, -1):
-        # E is not reachable, return D's reachable area
-        return d_reachable
-    
-    # E is reachable, return D's reach to E
-    if e_pos != (-1, -1):
-        return bfs_reachable_from_set(grid, d_reachable, e_pos)
-    
-    return d_reachable
-
-
-def calculate_proximity_bonus(grid: List[str], reachable: Set[Tuple[int, int]], target: str) -> float:
-    """Calculate proximity bonus for unreachable objectives."""
-    target_pos = find_position(grid, target)
-    if target_pos == (-1, -1):
-        return 0
-    
-    if target_pos in reachable:
-        return 50  # Full bonus if reachable
-    
-    # Calculate minimum distance to reachable area
-    min_dist = float('inf')
-    for pos in reachable:
-        dist = abs(pos[0] - target_pos[0]) + abs(pos[1] - target_pos[1])
-        min_dist = min(min_dist, dist)
-    
-    if min_dist == float('inf'):
-        return 0
-    
-    # Proximity bonus: 50 points - (distance * 5)
-    # Max distance for any bonus is 10 (50 - 10*5 = 0)
-    return max(0, 50 - (min_dist * 5))
-
-
 def count_adjacent_traps(grid: List[str], valid_path: Set[Tuple[int, int]]) -> int:
     """Count traps adjacent to the valid path."""
     adjacent_traps = 0
@@ -201,10 +129,160 @@ def count_adjacent_traps(grid: List[str], valid_path: Set[Tuple[int, int]]) -> i
     return adjacent_traps
 
 
+
+
+
+def get_stateful_path(grid: List[str], start: Tuple[int, int], end: Tuple[int, int]) -> Tuple[Set[Tuple[int, int]], Set[str]]:
+    """
+    Find shortest path between two points considering keys/doors.
+    Returns (path_positions, collected_keys) or (set(), set()) if unreachable.
+    """
+    rows, cols = len(grid), len(grid[0]) if grid else 0
+    
+    # State: (pos_r, pos_c, frozenset(keys))
+    # Queue: (r, c, keys, path_history)
+    start_keys = frozenset()
+    queue = deque([(start[0], start[1], start_keys, [start])])
+    visited = set([(start[0], start[1], start_keys)])
+    
+    while queue:
+        r, c, keys, path = queue.popleft()
+        
+        # Check if we reached the target
+        if (r, c) == end:
+            return set(path), set(keys)
+        
+        # Current cell processing
+        char = grid[r][c]
+        new_keys = set(keys)
+        
+        # If standing on a key, collect it
+        if 'a' <= char <= 'z':
+            new_keys.add(char)
+        
+        frozen_new_keys = frozenset(new_keys)
+        
+        # Explore neighbors
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nr, nc = r + dr, c + dc
+            
+            if 0 <= nr < rows and 0 <= nc < len(grid[nr]):
+                next_char = grid[nr][nc]
+                
+                # Check traversability
+                if next_char == '#':
+                    continue
+                    
+                # Check doors - require matching key
+                if 'A' <= next_char <= 'Z' and next_char not in ['S', 'E', 'T', 'K', 'D']:
+                    required_key = next_char.lower()
+                    if required_key not in new_keys:
+                        continue
+                        
+                # Check visited state
+                if (nr, nc, frozen_new_keys) not in visited:
+                    visited.add((nr, nc, frozen_new_keys))
+                    queue.append((nr, nc, frozen_new_keys, path + [(nr, nc)]))
+                    
+    return set(), set()
+
+def solve_maze_graph(grid: List[str], s_pos: Tuple[int, int], e_pos: Tuple[int, int]) -> Dict:
+    """
+    Solve the maze by finding the optimal sequence of key collections.
+    Returns details about the solution path, collected keys, and complexity.
+    """
+    # Identify all interesting points
+    keys_map = {}
+    doors_map = {}
+    for r, row in enumerate(grid):
+        for c, char in enumerate(row):
+            if 'a' <= char <= 'z':
+                keys_map[char] = (r, c)
+            elif 'A' <= char <= 'Z':
+                doors_map[char] = (r, c)
+                
+    # Full stateful BFS for entire maze solution
+    # We want to find a path from S to E that maximizes "complexity" (key chains)
+    # But for grading, we just want *the* shortest valid path to E first
+    
+    rows, cols = len(grid), len(grid[0])
+    
+    # Queue: (r, c, frozenset(keys), path_list)
+    start_state = (s_pos[0], s_pos[1], frozenset())
+    queue = deque([(s_pos[0], s_pos[1], frozenset(), [s_pos])])
+    visited = {start_state: 0} # map state -> path length
+    
+    final_path = []
+    final_keys = set()
+    solved = False
+    
+    # Limit iterations to prevent hanging on huge mazes
+    max_iter = 100000
+    iter_count = 0
+    
+    while queue and iter_count < max_iter:
+        iter_count += 1
+        r, c, keys, path = queue.popleft()
+        
+        if (r, c) == e_pos:
+            final_path = path
+            final_keys = keys
+            solved = True
+            break
+            
+        # Update keys if on a key tile
+        curr_char = grid[r][c]
+        next_keys = set(keys)
+        if 'a' <= curr_char <= 'z':
+            next_keys.add(curr_char)
+        frozen_keys = frozenset(next_keys)
+        
+        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nr, nc = r + dr, c + dc
+            
+            if 0 <= nr < rows and 0 <= nc < len(grid[nr]):
+                n_char = grid[nr][nc]
+                
+                # Wall check
+                if n_char == '#':
+                    continue
+                    
+                # Door check
+                if 'A' <= n_char <= 'Z' and n_char not in ['S', 'E', 'T', 'K', 'D']:
+                    if n_char.lower() not in next_keys:
+                        continue
+                        
+                # State check
+                new_state = (nr, nc, frozen_keys)
+                if new_state not in visited:
+                    visited[new_state] = len(path) + 1
+                    queue.append((nr, nc, frozen_keys, path + [(nr, nc)]))
+    
+    # Calculate complexity chain
+    # Check which key/door pairs were used effectively
+    # A pair (k, D) is "used" if we have key k, and passed through door D
+    used_pairs = 0
+    used_doors = set()
+    for r, c in final_path:
+        char = grid[r][c]
+        if 'A' <= char <= 'Z':
+            if char not in used_doors:
+                used_doors.add(char)
+                # If we passed door D, and have key d, that's a valid chain link
+                if char.lower() in final_keys:
+                    used_pairs += 1
+                    
+    return {
+        "solvable": solved,
+        "path": final_path,
+        "path_length": len(final_path),
+        "keys_collected": list(final_keys),
+        "chain_length": used_pairs
+    }
+
 def grade_maze(maze_text: str) -> Dict:
     """
-    Main evaluation function implementing the gradient scoring system.
-    Returns a detailed JSON report with scores and explanations.
+    Main evaluation function implementing the v2 scoring system (Multi-Key).
     """
     try:
         # Parse the maze
@@ -215,133 +293,106 @@ def grade_maze(maze_text: str) -> Dict:
         
         rows, cols = len(grid), len(grid[0]) if grid else 0
         
-        # Check size limit - penalize instead of rejecting
+        # Check size limit
         MAX_ROWS = 32
         MAX_COLS = 32
         size_penalty = 0
         if rows > MAX_ROWS or cols > MAX_COLS:
-            # Penalize -1 for each row/col exceeding the limit
-            excess_rows = max(0, rows - MAX_ROWS)
-            excess_cols = max(0, cols - MAX_COLS)
-            size_penalty = excess_rows + excess_cols
+            excess = (max(0, rows - MAX_ROWS) + max(0, cols - MAX_COLS))
+            size_penalty = excess * 10 
         
-        # Count elements
         counts = count_elements(grid)
-        
-        # Find start position
         s_pos = find_position(grid, 'S')
+        e_pos = find_position(grid, 'E')
+        
         if s_pos == (-1, -1):
             return {"error": "No start position 'S' found", "score": -100}
+            
+        # Analyze solution
+        solution = solve_maze_graph(grid, s_pos, e_pos) if e_pos != (-1, -1) else {"solvable": False, "path": [], "path_length": 0, "keys_collected": [], "chain_length": 0}
         
-        # Calculate reachable areas
-        reachable = bfs_reachable(grid, s_pos)
-        valid_path = get_valid_path(grid, s_pos)
+        valid_path = set(solution["path"])
         
-        # Calculate scores
+        # --- SCORING COMPONENTS ---
+        
         scores = {}
-        penalties = {}
         
-        # 1. Ambition Score (Grid Size)
-        ambition_score = rows * cols
+        # 1. Ambition (Logarithmic)
+        grid_size = rows * cols
+        import math
+        ambition_score = 100 * math.log2(grid_size) if grid_size > 0 else 0
         scores["ambition"] = ambition_score
         
-        # 2. Progress Score (Reachable Tiles)
-        progress_score = len(reachable) * 2
-        scores["progress"] = progress_score
+        # 2. Complexity (Chain Length)
+        # 50 points per Key/Door pair used
+        chain_score = solution["chain_length"] * 50
+        scores["complexity"] = chain_score
         
-        # 3. Objective Bonuses
-        k_bonus = 50 if find_position(grid, 'K') in reachable else 0
-        d_bonus = 50 if find_position(grid, 'D') in reachable else 0
-        e_bonus = 50 if find_position(grid, 'E') in reachable else 0
+        # 3. Path Efficiency
+        # (Path Length / Grid Size) * 100
+        path_eff_score = 0
+        if grid_size > 0 and solution["solvable"]:
+            path_eff_score = (solution["path_length"] / grid_size) * 100
+        scores["path_efficiency"] = path_eff_score
         
-        objective_score = k_bonus + d_bonus + e_bonus
-        scores["objectives"] = objective_score
-        scores["key_bonus"] = k_bonus
-        scores["door_bonus"] = d_bonus
-        scores["end_bonus"] = e_bonus
+        # 4. Completion Bonus
+        completion_score = 50 if solution["solvable"] else 0
+        scores["completion"] = completion_score
         
-        # 4. Proximity Bonuses for Unreachable Objectives
-        k_proximity = calculate_proximity_bonus(grid, reachable, 'K')
-        d_proximity = calculate_proximity_bonus(grid, reachable, 'D')
-        e_proximity = calculate_proximity_bonus(grid, reachable, 'E')
-        
-        proximity_score = k_proximity + d_proximity + e_proximity
-        scores["proximity"] = proximity_score
-        
-        # 5. Danger Score (Adjacent Traps)
+        # 5. Danger (Diminishing)
         adjacent_traps = count_adjacent_traps(grid, valid_path)
-        danger_score = adjacent_traps * 20
+        danger_score = 20 * math.sqrt(adjacent_traps) if adjacent_traps > 0 else 0
         scores["danger"] = danger_score
         
-        # 6. Structure Penalties
+        # Structure Penalty (Traps > Walls)
+        structure_penalty = 0
         if counts['T'] > counts['#']:
-            structure_penalty = -0.5  # 50% penalty
-            penalties["structure"] = structure_penalty
-        else:
-            structure_penalty = 0
-        
-        # 7. Size penalty (if exceeds limit)
-        if size_penalty > 0:
-            penalties["size"] = -size_penalty
-        
-        # Calculate total score
-        base_score = (scores["ambition"] + scores["progress"] + 
-                     scores["objectives"] + scores["proximity"] + scores["danger"])
+            structure_penalty = -0.5
+            
+        # Total
+        base_score = (ambition_score + chain_score + path_eff_score + completion_score + danger_score)
         total_score = base_score * (1 + structure_penalty) - size_penalty
         
-        # Prepare result
+        # Result
         result = {
             "score": round(total_score, 2),
-            "base_score": base_score,
+            "base_score": round(base_score, 2),
             "structure_penalty": structure_penalty,
-            "size_penalty": -size_penalty if size_penalty > 0 else 0,
             "components": {
                 "ambition": {
-                    "score": scores["ambition"],
-                    "description": f"Grid size: {rows} x {cols} = {rows * cols} points",
-                    "details": {"rows": rows, "cols": cols}
+                    "score": round(ambition_score, 2),
+                    "description": f"Grid {rows}x{cols} -> 100*log2",
                 },
-                "progress": {
-                    "score": scores["progress"],
-                    "description": f"{len(reachable)} reachable tiles x 2 points each",
-                    "details": {"reachable_tiles": len(reachable)}
+                "complexity": {
+                    "score": chain_score,
+                    "description": f"{solution['chain_length']} Key/Door pairs solved x 50",
+                    "details": {"keys_collected": solution["keys_collected"]}
                 },
-                "objectives": {
-                    "score": scores["objectives"],
-                    "description": "Objectives found on valid path",
-                    "details": {
-                        "key_found": k_bonus > 0,
-                        "door_found": d_bonus > 0,
-                        "end_found": e_bonus > 0
-                    }
+                "path_efficiency": {
+                    "score": round(path_eff_score, 2),
+                    "description": f"Length {solution['path_length']} / Size {grid_size}",
                 },
-                "proximity": {
-                    "score": scores["proximity"],
-                    "description": "Partial credit for unreachable objectives",
-                    "details": {
-                        "key_proximity": round(k_proximity, 2),
-                        "door_proximity": round(d_proximity, 2),
-                        "end_proximity": round(e_proximity, 2)
-                    }
+                "completion": {
+                    "score": completion_score,
+                    "description": "Reached End 'E'",
                 },
                 "danger": {
-                    "score": scores["danger"],
-                    "description": f"{adjacent_traps} traps adjacent to valid path x 20 points",
-                    "details": {"adjacent_traps": adjacent_traps}
+                    "score": round(danger_score, 2),
+                    "description": f"Traps on path: {adjacent_traps} (sqrt scaled)",
                 }
             },
-            "penalties": penalties,
             "maze_info": {
                 "dimensions": f"{rows}x{cols}",
-                "elements": counts,
-                "solvable": len(valid_path) > len(reachable) * 0.1,  # Arbitrary threshold
-                "complexity_ratio": len(valid_path) / max(1, len(reachable))
+                "solvable": solution["solvable"],
+                "keys_collected": solution["keys_collected"]
             }
         }
         
         return result
         
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return {"error": str(e), "score": -100}
 
 

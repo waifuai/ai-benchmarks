@@ -57,8 +57,8 @@ Most maze benchmarks are binary (Pass/Fail). This is a **Gradient Benchmark** th
 ### The Maze Gauntlet Scoring Components:
 
 1. **Ambition** (Grid Size)
-   - Points: Rows × Columns
-   - Rewards larger, more ambitious mazes
+   - Points: 100 × log₂(Rows × Cols)
+   - Rewards larger mazes but with logarithmic scaling to prevent exponential runaway
 
 2. **Progress** (Path Logic)
    - 2 points per reachable tile
@@ -66,19 +66,24 @@ Most maze benchmarks are binary (Pass/Fail). This is a **Gradient Benchmark** th
    - +50 bonus for Door ('D')
    - +50 bonus for End ('E')
 
-3. **Danger** (Strategic Placement)
-   - +20 points per trap adjacent to valid path
-   - Only traps near the solution path count
-   - Traps in sealed rooms = 0 points
+3. **Path Efficiency** (New)
+   - Points: (Shortest Valid Path Length / Grid Size) × 100
+   - Rewards mazes that use the available space efficiently for the solution
 
-4. **Logic Penalties**
+4. **Danger** (Strategic Placement)
+   - Points: 20 × sqrt(Adjacent Traps)
+   - Diminishing returns preventing "trap spamming"
+   - Only traps near the valid solution path count
+
+5. **Logic Penalties**
    - If Traps > Walls: -50% score penalty
    - Path must follow S → K → D → E sequence
 
-5. **Proximity Bonuses**
-   - Partial credit for unreachable objectives based on distance to reachable areas
+6. **Proximity Bonuses**
+   - Partial credit for **unreachable** objectives based on distance to reachable areas
+   - No double-counting for reached objectives
 
-6. **Constraints**
+7. **Constraints**
    - Maximum maze size: **32×32** (mazes exceeding this limit score 0)
 
 ## 🔧 Architecture

@@ -223,6 +223,94 @@ def run_all_models(benchmark: str, sequential: bool = False):
     show_leaderboard(benchmark)
 
 
+def rescore_all_outputs(benchmark: str):
+    """Re-score all existing outputs and update leaderboard."""
+    from leaderboard import Leaderboard
+    
+    lb = Leaderboard()
+    root_dir = Path(__file__).parent
+    output_dir = root_dir / "output"
+    models_file = root_dir / "models.txt"
+    
+    if not output_dir.exists():
+        print("[ERROR] No output directory found")
+        return
+        
+    # Gather all potential models
+    all_models = set()
+    
+    # 1. From models.txt
+    if models_file.exists():
+        with open(models_file, 'r', encoding='utf-8') as f:
+            for line in f:
+                if line.strip():
+                    all_models.add(line.strip())
+    
+    # 2. From leaderboard
+    # We can't easily get keys without loading, but we can assume LB is loaded in `lb.data`
+    if "models" in lb.data:
+        all_models.update(lb.data["models"].keys())
+        
+    # 3. From output directories (try to reverse engineer or just list them)
+    # It's hard to map valid folder names back to model IDs if we don't have the map.
+    # So we rely on the models we know.
+    
+    print(f"[RESCORE] Re-evaluating {len(all_models)} potential models for {benchmark}...")
+    
+    updated = 0
+    errors = 0
+    skipped = 0
+    
+    for model in tqdm(sorted(all_models), desc="Rescoring"):
+        safe_model_name = model.replace("/", "_").replace(":", "_")
+        model_dir = output_dir / safe_model_name
+        output_file = model_dir / f"{benchmark}.txt"
+        
+        if not output_file.exists():
+            # Try to see if there is any directory that matches logic?
+            # actually if file doesn't exist, we just skip
+            # skipped += 1
+            continue
+            
+        try:
+            # Read maze
+            with open(output_file, 'r', encoding='utf-8') as f:
+                llm_output = f.read()
+            
+            # Grade
+            if benchmark == "maze":
+                result = grade_maze(llm_output)
+            else:
+                continue
+                
+            # Add model info (needed for some logic, though grade_maze doesn't strictly use it)
+            result["model"] = model
+            
+            # Save new score details
+            score_file = model_dir / f"{benchmark}_score.json"
+            clean_result = {k: v for k, v in result.items() if k != "llm_response"}
+            with open(score_file, 'w', encoding='utf-8') as f:
+                json.dump(clean_result, f, indent=2)
+            
+            # Update leaderboard
+            # Get existing details to preserve token stats
+            old_entry = lb.get_result(model, benchmark)
+            details = {}
+            if old_entry:
+                details = old_entry.get("details", {})
+            
+            # Update score
+            lb.add_result(model, benchmark, result["score"], details)
+            updated += 1
+            
+        except Exception as e:
+            # tqdm.write(f"[ERROR] Failed to rescore {model}: {e}")
+            errors += 1
+            
+    print(f"\\n[COMPLETE] Updated: {updated}, Errors: {errors}")
+    show_leaderboard(benchmark)
+
+
 def main():
     """Main CLI function."""
     parser = argparse.ArgumentParser(
@@ -246,8 +334,13 @@ Examples:
     parser.add_argument("--add-to-leaderboard", "-a", action="store_true", help="Save to leaderboard")
     parser.add_argument("--run-all", action="store_true", help="Run all models from models.txt")
     parser.add_argument("--sequential", "-s", action="store_true", help="Run sequentially instead of parallel")
+    parser.add_argument("--rescore", action="store_true", help="Re-score all existing mazes in output/ directory")
     
     args = parser.parse_args()
+    
+    if args.rescore:
+        rescore_all_outputs(args.benchmark)
+        return
     
     if args.leaderboard:
         show_leaderboard(args.benchmark)
