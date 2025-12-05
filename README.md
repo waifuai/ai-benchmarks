@@ -70,7 +70,7 @@ Most maze benchmarks are binary (Pass/Fail). This is a **Gradient Benchmark** th
    - No double-counting for reached objectives
 
 7. **Constraints**
-   - Maximum maze size: **32×32** (mazes exceeding this limit score 0)
+   - Maximum maze size: **64×64** (mazes exceeding this limit score 0)
 
 ## 🔧 Architecture
 

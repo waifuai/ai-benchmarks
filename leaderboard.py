@@ -67,6 +67,7 @@ class Leaderboard:
     ):
         """
         Add or update a benchmark result for a model.
+        Supports multiple runs by appending to a list.
         
         Args:
             model_name: The model identifier (e.g., "openai/gpt-4")
@@ -80,19 +81,28 @@ class Leaderboard:
         if model_name not in self.data["models"]:
             self.data["models"][model_name] = {}
         
+        # Initialize as list if not present
+        if benchmark not in self.data["models"][model_name]:
+            self.data["models"][model_name][benchmark] = []
+            
+        # Migrate old dict format to list if necessary
+        current_data = self.data["models"][model_name][benchmark]
+        if isinstance(current_data, dict):
+            self.data["models"][model_name][benchmark] = [current_data]
+        
         # Store the result
-        self.data["models"][model_name][benchmark] = {
+        self.data["models"][model_name][benchmark].append({
             "score": score,
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "details": details or {}
-        }
+        })
         
         self._save()
         self.save_to_markdown_file()
     
     def get_result(self, model_name: str, benchmark: str) -> Optional[Dict]:
         """
-        Get a specific result for a model and benchmark.
+        Get the most recent result for a model and benchmark.
         
         Args:
             model_name: The model identifier
@@ -101,11 +111,21 @@ class Leaderboard:
         Returns:
             Result dict or None if not found
         """
-        return self.data.get("models", {}).get(model_name, {}).get(benchmark)
+        data = self.data.get("models", {}).get(model_name, {}).get(benchmark)
+        if not data:
+            return None
+        
+        # Handle list format (return last item)
+        if isinstance(data, list):
+            return data[-1] if data else None
+            
+        # Handle legacy dict format
+        return data
     
     def get_rankings(self, benchmark: str) -> List[Dict]:
         """
         Get ranked list of models for a specific benchmark.
+        Includes all runs for each model.
         
         Args:
             benchmark: The benchmark name
@@ -117,13 +137,18 @@ class Leaderboard:
         
         for model_name, benchmarks in self.data.get("models", {}).items():
             if benchmark in benchmarks:
-                result = benchmarks[benchmark]
-                rankings.append({
-                    "model": model_name,
-                    "score": result["score"],
-                    "timestamp": result.get("timestamp", ""),
-                    "details": result.get("details", {})
-                })
+                result_data = benchmarks[benchmark]
+                
+                # Normalize to list
+                results = result_data if isinstance(result_data, list) else [result_data]
+                
+                for result in results:
+                    rankings.append({
+                        "model": model_name,
+                        "score": result["score"],
+                        "timestamp": result.get("timestamp", ""),
+                        "details": result.get("details", {})
+                    })
         
         # Sort by score descending
         rankings.sort(key=lambda x: x["score"], reverse=True)

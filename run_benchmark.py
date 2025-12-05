@@ -131,49 +131,59 @@ def rescore_all_outputs(benchmark: str):
     for model in tqdm(sorted(all_models), desc="Rescoring"):
         safe_model_name = model.replace("/", "_").replace(":", "_")
         model_dir = output_dir / safe_model_name
-        output_file = model_dir / f"{benchmark}.txt"
         
-        if not output_file.exists():
-            # Try to see if there is any directory that matches logic?
-            # actually if file doesn't exist, we just skip
-            # skipped += 1
+        # Search for all benchmark output files
+        output_files = list(model_dir.glob(f"{benchmark}*.txt"))
+        
+        if not output_files:
             continue
             
-        try:
-            # Read maze
-            with open(output_file, 'r', encoding='utf-8') as f:
-                llm_output = f.read()
-            
-            # Grade
-            if benchmark == "maze":
-                result = grade_strategic_maze(llm_output)
-            else:
-                continue
+        for output_file in output_files:
+            try:
+                # Read maze
+                with open(output_file, 'r', encoding='utf-8') as f:
+                    llm_output = f.read()
                 
-            # Add model info (needed for some logic, though grade_maze doesn't strictly use it)
-            result["model"] = model
-            
-            # Save new score details
-            score_file = model_dir / f"{benchmark}_score.json"
-            clean_result = {k: v for k, v in result.items() if k != "llm_response"}
-            with open(score_file, 'w', encoding='utf-8') as f:
-                json.dump(clean_result, f, indent=2)
-            
-            # Update leaderboard
-            # Get existing details to preserve token stats
-            old_entry = lb.get_result(model, benchmark)
-            details = {}
-            if old_entry:
-                details = old_entry.get("details", {})
-            
-            # Update score
-            lb.add_result(model, benchmark, result["score"], details)
-            updated += 1
-            
-        except Exception as e:
-            # tqdm.write(f"[ERROR] Failed to rescore {model}: {e}")
-            errors += 1
-            
+                # Grade
+                if benchmark == "maze":
+                    result = grade_strategic_maze(llm_output)
+                else:
+                    continue
+                    
+                # Add model info
+                result["model"] = model
+                
+                # Save new score details
+                # Save new score details
+                score_file = output_file.with_name(output_file.stem + "_score.json")
+                
+                # Try to preserve existing details (time, tokens)
+                existing_details = {}
+                if score_file.exists():
+                    try:
+                        with open(score_file, 'r', encoding='utf-8') as f:
+                            existing_data = json.load(f)
+                            existing_details = {
+                                "elapsed_seconds": existing_data.get("elapsed_seconds", 0),
+                                "token_usage": existing_data.get("token_usage", {})
+                            }
+                    except:
+                        pass
+                
+                clean_result = {k: v for k, v in result.items() if k != "llm_response"}
+                # Merge preserved details
+                clean_result.update(existing_details)
+                
+                with open(score_file, 'w', encoding='utf-8') as f:
+                    json.dump(clean_result, f, indent=2)
+                
+                # Update leaderboard
+                lb.add_result(model, benchmark, result["score"], existing_details)
+                updated += 1
+                
+            except Exception as e:
+                errors += 1 
+
     print(f"\\n[COMPLETE] Updated: {updated}, Errors: {errors}")
     show_leaderboard(benchmark)
 
@@ -182,6 +192,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
     """Ingest a manual output file and update the system."""
     from leaderboard import Leaderboard
     import re
+    import time
     
     path = Path(file_path)
     if not path.exists():
@@ -198,12 +209,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
             return
             
         # Split content by "model:" (case-insensitive) to find blocks
-        # We need to keep the delimiter to know where blocks start
-        # Regex lookahead to split but keep delimiter is tricky with split, 
-        # easier to finditer.
-        
-        # Regex to find model headers: start of line, "model:" or "MODEL:", capture rest of line
-        model_header_pattern = re.compile(r'(?m)^(?:model|MODEL):\\s*(.+)$')
+        model_header_pattern = re.compile(r'^(?:model|MODEL):\s*(.+)$', re.MULTILINE)
         
         matches = list(model_header_pattern.finditer(content))
         
@@ -223,7 +229,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
             block_content = content[start_pos:end_pos]
             
             # Extract time if present
-            time_match = re.search(r'(?m)^(?:time|TIME):\\s*([\\d\\.]+)', block_content)
+            time_match = re.search(r'(?m)^(?:time|TIME):\s*([\d\.]+)s?', block_content)
             elapsed_seconds = 0.0
             if time_match:
                 try:
@@ -241,7 +247,12 @@ def ingest_manual_output(file_path: str, benchmark: str):
             output_dir = Path(__file__).parent / "output" / safe_model_name
             output_dir.mkdir(parents=True, exist_ok=True)
             
-            output_file = output_dir / f"{benchmark}.txt"
+            # Use timestamp to allow multiple runs
+            timestamp = int(time.time())
+            # Add small delay to ensure unique timestamps in fast loops
+            time.sleep(0.1)
+            output_file = output_dir / f"{benchmark}_{timestamp}.txt"
+            
             with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(llm_output)
                 

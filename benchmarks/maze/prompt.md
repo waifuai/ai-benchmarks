@@ -31,7 +31,7 @@ Your task is to generate a SINGLE ASCII maze that maximizes a continuous score b
 
 **Strict Constraints:**
 - **Structure:** Walls should generally outnumber traps (more lenient than before)
-- **Size:** Max 32x32.
+- **Size:** Max 64x64.
 - **Solvability:** The maze MUST be solvable from 'S' to 'E'.
 - **Logic:** All strategic elements should serve the puzzle, not complicate it randomly
 

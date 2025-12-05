@@ -14,8 +14,8 @@ from typing import List, Tuple, Dict, Set, Optional, FrozenSet
 
 
 # Validation constants
-MAX_ROWS = 32
-MAX_COLS = 32
+MAX_ROWS = 64
+MAX_COLS = 64
 MAX_CELLS = MAX_ROWS * MAX_COLS
 
 # Core maze characters

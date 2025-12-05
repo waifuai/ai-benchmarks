@@ -4,14 +4,49 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.5.1] - 2025-12-05
+## [0.5.2]
+
+### Added
+- **Enhanced Maze Size Support**: Increased maximum maze size from 32×32 to 64×64
+  - Updated validation constants in strategic_evaluator.py
+  - Modified prompt.md to reflect new size constraints
+  - Updated README.md documentation
+- **Multiple Run Support**: Leaderboard now supports multiple runs per model
+  - Migrated from single-result dict format to list-based storage
+  - Enhanced get_rankings() to include all runs for each model
+  - Added migration logic for backward compatibility
+  - Updated ingest_manual_output to generate timestamped output files
+- **Improved Rescoring**: Enhanced --rescore functionality
+  - Searches for multiple benchmark output files per model
+  - Preserves existing metadata (timing, token usage) during rescore
+  - Better error handling and file discovery
+
+### Changed
+- **Leaderboard Storage**: Migrated from single-result to multiple-run format
+  - Supports historical comparison and progress tracking
+  - Maintains backward compatibility with existing data
+- **Input Processing**: Enhanced pattern matching and file handling
+  - Updated regex patterns for better model detection
+  - Added timestamp support for multiple manual runs
+
+### Fixed
+- **Regex Pattern Issues**: Improved model header detection in manual output ingestion
+- **File Overwriting**: Prevented multiple manual runs from overwriting previous results
+- **Metadata Preservation**: Fixed token usage and timing data loss during rescoring
+
+### Improved
+- **Scalability**: Support for larger, more complex mazes (up to 64×64)
+- **Performance**: Better file handling for multiple benchmark outputs
+- **User Experience**: Enhanced error messages and file management
+
+## [0.5.1]
 
 ### Changed
 - **Leaderboard Display**: Removed prompt, completion, and total columns from leaderboard table
   - Simplified table to show only Rank, Model, Score, and Time (s) columns
   - Token usage information still stored in JSON but no longer displayed in markdown table
 
-## [0.5.0] - 2025-12-05
+## [0.5.0]
 
 ### Added
 - **Strategic Maze Elements**: Complete overhaul adding 5 new strategic maze mechanics
