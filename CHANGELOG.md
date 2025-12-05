@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.0] - 2025-12-05
+
+### Added
+- **OpenRouter integration** (`openrouter.py`): Direct API calls to OpenRouter for live model benchmarking
+- **Leaderboard system** (`leaderboard.py`): Track and compare model scores across benchmarks
+  - JSON-based persistent storage (`leaderboard.json`)
+  - Markdown table generation (`LEADERBOARD.md`)
+- **Batch benchmarking**: `--run-all` flag to test all models from `models.txt`
+  - Parallel execution by default for faster testing
+  - `--sequential` flag for one-at-a-time testing
+- **Timing metrics**: Track and display elapsed time (seconds) for each model response
+- New CLI options: `--model`, `--leaderboard`, `--add-to-leaderboard`, `--run-all`, `--sequential`
+- `.gitignore` for excluding generated files
+- `models.txt` for configuring which models to benchmark
+
+### Changed
+- `run_benchmark.py` now supports live API benchmarking in addition to file input
+- Token usage tracking (prompt, completion, total) in leaderboard results
+- Updated `requirements.txt` with `requests` dependency
+
+---
+
 ## [0.1.1] - 2025-12-05
 
 ### Added

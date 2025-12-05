@@ -1,0 +1,10 @@
+kwaipilot/kat-coder-pro:free
+tngtech/deepseek-r1t2-chimera:free
+tngtech/deepseek-r1t-chimera:free
+z-ai/glm-4.5-air:free
+nvidia/nemotron-nano-12b-v2-vl:free
+tngtech/tng-r1t-chimera:free
+qwen/qwen3-coder:free
+amazon/nova-2-lite-v1:free
+google/gemma-3-27b-it:free
+openai/gpt-oss-20b:free

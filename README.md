@@ -2,6 +2,44 @@
 
 A specialized testing suite for evaluating Large Language Models (LLMs) on spatial reasoning tasks through gradient scoring systems.
 
+## 🚀 Quick Start
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run benchmark on LLM output file
+python run_benchmark.py --input path_to_llm_output.txt
+
+# Run benchmark against an OpenRouter model
+python run_benchmark.py --model openai/gpt-4 --benchmark maze
+
+# Run and save to leaderboard
+python run_benchmark.py --model anthropic/claude-3-opus --add-to-leaderboard
+
+# View the leaderboard
+python run_benchmark.py --leaderboard
+```
+
+### OpenRouter Setup
+
+Set your API key as an environment variable:
+```bash
+# Windows
+set OPENROUTER_API_KEY=your_key_here
+
+# Linux/Mac
+export OPENROUTER_API_KEY=your_key_here
+```
+
+## 🏆 Leaderboard System
+
+The benchmark includes a leaderboard to track and compare model performance:
+
+- **Add results**: Use `--add-to-leaderboard` when running benchmarks
+- **View rankings**: Use `--leaderboard` to display current standings
+- **Persistent storage**: Results saved to `leaderboard.json`
+
 ## 🧪 Current Benchmarks
 
 ### The "Maze Gauntlet" - LLM Spatial Reasoning Challenge
@@ -13,16 +51,6 @@ Most maze benchmarks are binary (Pass/Fail). This is a **Gradient Benchmark** th
 - **Ambition**: Grid size and complexity
 - **Logic**: Proper S → K → D → E path progression  
 - **Danger**: Strategic trap placement adjacent to valid paths
-
-## 🚀 Quick Start
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run benchmark on LLM output
-python run_benchmark.py --input path_to_llm_output.txt
-```
 
 ## 📊 Scoring System
 
@@ -50,13 +78,20 @@ python run_benchmark.py --input path_to_llm_output.txt
 5. **Proximity Bonuses**
    - Partial credit for unreachable objectives based on distance to reachable areas
 
+6. **Constraints**
+   - Maximum maze size: **32×32** (mazes exceeding this limit score 0)
+
 ## 🔧 Architecture
 
 ```
 ai-benchmark/
 ├── README.md               # This file
+├── CHANGELOG.md            # Version history
 ├── requirements.txt        # Dependencies
 ├── run_benchmark.py        # CLI Entry point
+├── openrouter.py           # OpenRouter API client
+├── leaderboard.py          # Leaderboard management
+├── leaderboard.json        # Stored benchmark results
 └── benchmarks/
     ├── __init__.py
     └── maze/
@@ -71,13 +106,20 @@ This repository is designed to be modular. To add new benchmarks:
 
 1. Create a new directory under `benchmarks/`
 2. Implement an evaluator function
-3. Update the CLI in `run_benchmark.py` to include your new benchmark
+3. Add a `prompt.md` file with the benchmark prompt
+4. Update the CLI in `run_benchmark.py` to include your new benchmark
 
 ## 📝 Example Usage
 
 ```bash
-# Run the Maze Gauntlet benchmark
+# Run the Maze Gauntlet benchmark on a file
 python run_benchmark.py --input sample_llm_output.txt
+
+# Benchmark GPT-4 and add to leaderboard
+python run_benchmark.py --model openai/gpt-4 --add-to-leaderboard
+
+# Get JSON output
+python run_benchmark.py --input sample_llm_output.txt --json
 ```
 
 The output will be a detailed JSON report showing your score breakdown.

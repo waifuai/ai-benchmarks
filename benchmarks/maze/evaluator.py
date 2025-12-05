@@ -211,18 +211,19 @@ def grade_maze(maze_text: str) -> Dict:
         grid = parse_maze_from_text(maze_text)
         
         if not grid:
-            return {"error": "No valid maze found", "score": 0}
+            return {"error": "No valid maze found", "score": -100}
         
         rows, cols = len(grid), len(grid[0]) if grid else 0
         
-        # Check size limit
+        # Check size limit - penalize instead of rejecting
         MAX_ROWS = 32
         MAX_COLS = 32
+        size_penalty = 0
         if rows > MAX_ROWS or cols > MAX_COLS:
-            return {
-                "error": f"Maze size {rows}x{cols} exceeds limit of {MAX_ROWS}x{MAX_COLS}", 
-                "score": 0
-            }
+            # Penalize -1 for each row/col exceeding the limit
+            excess_rows = max(0, rows - MAX_ROWS)
+            excess_cols = max(0, cols - MAX_COLS)
+            size_penalty = excess_rows + excess_cols
         
         # Count elements
         counts = count_elements(grid)
@@ -230,7 +231,7 @@ def grade_maze(maze_text: str) -> Dict:
         # Find start position
         s_pos = find_position(grid, 'S')
         if s_pos == (-1, -1):
-            return {"error": "No start position 'S' found", "score": 0}
+            return {"error": "No start position 'S' found", "score": -100}
         
         # Calculate reachable areas
         reachable = bfs_reachable(grid, s_pos)
@@ -279,25 +280,30 @@ def grade_maze(maze_text: str) -> Dict:
         else:
             structure_penalty = 0
         
+        # 7. Size penalty (if exceeds limit)
+        if size_penalty > 0:
+            penalties["size"] = -size_penalty
+        
         # Calculate total score
         base_score = (scores["ambition"] + scores["progress"] + 
                      scores["objectives"] + scores["proximity"] + scores["danger"])
-        total_score = base_score * (1 + structure_penalty)
+        total_score = base_score * (1 + structure_penalty) - size_penalty
         
         # Prepare result
         result = {
             "score": round(total_score, 2),
             "base_score": base_score,
             "structure_penalty": structure_penalty,
+            "size_penalty": -size_penalty if size_penalty > 0 else 0,
             "components": {
                 "ambition": {
                     "score": scores["ambition"],
-                    "description": f"Grid size: {rows} × {cols} = {rows * cols} points",
+                    "description": f"Grid size: {rows} x {cols} = {rows * cols} points",
                     "details": {"rows": rows, "cols": cols}
                 },
                 "progress": {
                     "score": scores["progress"],
-                    "description": f"{len(reachable)} reachable tiles × 2 points each",
+                    "description": f"{len(reachable)} reachable tiles x 2 points each",
                     "details": {"reachable_tiles": len(reachable)}
                 },
                 "objectives": {
@@ -320,13 +326,13 @@ def grade_maze(maze_text: str) -> Dict:
                 },
                 "danger": {
                     "score": scores["danger"],
-                    "description": f"{adjacent_traps} traps adjacent to valid path × 20 points",
+                    "description": f"{adjacent_traps} traps adjacent to valid path x 20 points",
                     "details": {"adjacent_traps": adjacent_traps}
                 }
             },
             "penalties": penalties,
             "maze_info": {
-                "dimensions": f"{rows}×{cols}",
+                "dimensions": f"{rows}x{cols}",
                 "elements": counts,
                 "solvable": len(valid_path) > len(reachable) * 0.1,  # Arbitrary threshold
                 "complexity_ratio": len(valid_path) / max(1, len(reachable))
@@ -336,7 +342,7 @@ def grade_maze(maze_text: str) -> Dict:
         return result
         
     except Exception as e:
-        return {"error": str(e), "score": 0}
+        return {"error": str(e), "score": -100}
 
 
 if __name__ == "__main__":
