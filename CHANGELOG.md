@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.4.0] - 2025-12-05
+
+### Removed
+- **OpenRouter Integration**: Removed all OpenRouter API integration and live model benchmarking
+- **Live API Calls**: Eliminated `--model` and `--run-all` flags that required API access
+- **External Dependencies**: Removed dependency on OpenRouter API for benchmarking
+
+### Changed
+- **CLI Interface**: Simplified to use only file-based input with `--input` flag
+- **Documentation**: Updated README and examples to reflect file-based workflow
+- **Focus**: Repository now exclusively processes pre-generated LLM output files
+
+### Added
+- **Manual Ingestion**: Enhanced `--ingest` feature for processing multiple model outputs from single file
+- **File Processing**: Streamlined workflow for benchmark evaluation from saved outputs
+
 ## [0.3.0] - 2025-12-05
 
 ### Added
@@ -54,7 +70,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `test_multikey.py`: Test suite for validating the new multi-key maze logic and scoring.
 
 ### Changed
-- **OpenRouter Integration**: Improved response parsing to robustly handle usage statistics (prompt/completion/total tokens).
+- **API Integration**: Improved response parsing to robustly handle usage statistics (prompt/completion/total tokens).
 - **Maze Evaluator**: 
   - Overhauled scoring formula to prioritize logical chain completion.
   - Adjusted **Danger** score to use diminishing returns (sqrt) for adjacent traps.
@@ -75,7 +91,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [0.2.0] - 2025-12-05
 
 ### Added
-- **OpenRouter integration** (`openrouter.py`): Direct API calls to OpenRouter for live model benchmarking
+- **Live benchmarking**: Direct API calls for model benchmarking (removed in later version)
 - **Leaderboard system** (`leaderboard.py`): Track and compare model scores across benchmarks
   - JSON-based persistent storage (`leaderboard.json`)
   - Markdown table generation (`LEADERBOARD.md`)
@@ -88,7 +104,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `models.txt` for configuring which models to benchmark
 
 ### Changed
-- `run_benchmark.py` now supports live API benchmarking in addition to file input
+- `run_benchmark.py` now supports file-based benchmarking with enhanced parsing
 - Token usage tracking (prompt, completion, total) in leaderboard results
 - Updated `requirements.txt` with `requests` dependency
 

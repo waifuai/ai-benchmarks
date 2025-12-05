@@ -11,25 +11,11 @@ pip install -r requirements.txt
 # Run benchmark on LLM output file
 python run_benchmark.py --input path_to_llm_output.txt
 
-# Run benchmark against an OpenRouter model
-python run_benchmark.py --model openai/gpt-4 --benchmark maze
-
 # Run and save to leaderboard
-python run_benchmark.py --model anthropic/claude-3-opus --add-to-leaderboard
+python run_benchmark.py --input llm_output.txt --add-to-leaderboard
 
 # View the leaderboard
 python run_benchmark.py --leaderboard
-```
-
-### OpenRouter Setup
-
-Set your API key as an environment variable:
-```bash
-# Windows
-set OPENROUTER_API_KEY=your_key_here
-
-# Linux/Mac
-export OPENROUTER_API_KEY=your_key_here
 ```
 
 ## 🏆 Leaderboard System
@@ -94,7 +80,6 @@ ai-benchmark/
 ├── CHANGELOG.md            # Version history
 ├── requirements.txt        # Dependencies
 ├── run_benchmark.py        # CLI Entry point
-├── openrouter.py           # OpenRouter API client
 ├── leaderboard.py          # Leaderboard management
 ├── leaderboard.json        # Stored benchmark results
 └── benchmarks/
@@ -120,8 +105,8 @@ This repository is designed to be modular. To add new benchmarks:
 # Run the Maze Gauntlet benchmark on a file
 python run_benchmark.py --input sample_llm_output.txt
 
-# Benchmark GPT-4 and add to leaderboard
-python run_benchmark.py --model openai/gpt-4 --add-to-leaderboard
+# Add benchmark results to leaderboard
+python run_benchmark.py --input sample_llm_output.txt --add-to-leaderboard
 
 # Get JSON output
 python run_benchmark.py --input sample_llm_output.txt --json
