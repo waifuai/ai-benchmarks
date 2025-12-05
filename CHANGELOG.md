@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.2.1] - 2025-12-05
+
+### Added
+- **Progress bars**: `tqdm` integration for visual progress during sequential benchmarking
+- **20 new models** added to `models.txt` (Gemini, Llama, Qwen, Mistral, and more)
+
+### Changed
+- `run_benchmark.py` now defaults to `--run-all --sequential` when no arguments provided
+- Added `tqdm>=4.65.0` to `requirements.txt`
+
+---
+
 ## [0.2.0] - 2025-12-05
 
 ### Added

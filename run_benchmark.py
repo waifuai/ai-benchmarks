@@ -10,6 +10,7 @@ import sys
 import time
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm import tqdm
 from benchmarks.maze.evaluator import grade_maze
 
 
@@ -166,13 +167,13 @@ def run_all_models(benchmark: str, sequential: bool = False):
     errors = 0
     
     if sequential:
-        # Sequential execution
-        for model in models_to_test:
-            print(f"\n[TESTING] {model}")
+        # Sequential execution with progress bar
+        for model in tqdm(models_to_test, desc="Benchmarking", unit="model"):
+            tqdm.write(f"[TESTING] {model}")
             model_name, result, error = benchmark_single_model(model, benchmark)
             
             if error:
-                print(f"[ERROR] {model}: {error}")
+                tqdm.write(f"[ERROR] {model}: {error}")
                 errors += 1
             else:
                 lb.add_result(
@@ -184,7 +185,7 @@ def run_all_models(benchmark: str, sequential: bool = False):
                         "elapsed_seconds": result.get("elapsed_seconds", 0)
                     }
                 )
-                print(f"[DONE] {model}: Score {result['score']} ({result.get('elapsed_seconds', 0)}s)")
+                tqdm.write(f"[DONE] {model}: Score {result['score']} ({result.get('elapsed_seconds', 0)}s)")
                 tested += 1
     else:
         # Parallel execution
@@ -252,12 +253,11 @@ Examples:
         show_leaderboard(args.benchmark)
         return
     
-    if args.run_all:
-        run_all_models(args.benchmark, sequential=args.sequential)
-        return
-    
+    # Default behavior: run-all sequentially if no specific action is specified
     if not args.input and not args.model:
-        parser.error("Either --input, --model, --run-all, or --leaderboard is required")
+        # Default to sequential unless --run-all is explicitly used (which respects --sequential flag)
+        run_all_models(args.benchmark, sequential=True if not args.run_all else args.sequential)
+        return
     
     try:
         if args.model:
