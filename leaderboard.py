@@ -183,8 +183,8 @@ class Leaderboard:
                 continue
             
             lines.append(f"## {bench.title()} Benchmark\n")
-            lines.append("| Rank | Model | Score | Prompt | Completion | Total | Time (s) |")
-            lines.append("|------|-------|-------|--------|------------|-------|----------|")
+            lines.append("| Rank | Model | Score | Time (s) |")
+            lines.append("|------|-------|-------|----------|")
             
             for entry in rankings:
                 # Medal for top 3
@@ -198,16 +198,11 @@ class Leaderboard:
                 
                 # Get details
                 details = entry.get("details", {})
-                token_usage = details.get("token_usage", {})
-                prompt_tokens = token_usage.get("prompt_tokens", 0)
-                completion_tokens = token_usage.get("completion_tokens", 0)
-                total_tokens = token_usage.get("total_tokens", 0)
                 elapsed = details.get("elapsed_seconds", 0)
                 
                 lines.append(
                     f"| {rank_display} | {entry['model']} | "
-                    f"{entry['score']:.2f} | {prompt_tokens} | {completion_tokens} | "
-                    f"{total_tokens} | {elapsed:.1f} |"
+                    f"{entry['score']:.2f} | {elapsed:.1f} |"
                 )
             
             lines.append("")

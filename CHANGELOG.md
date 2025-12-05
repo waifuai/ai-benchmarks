@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.5.1] - 2025-12-05
+
+### Changed
+- **Leaderboard Display**: Removed prompt, completion, and total columns from leaderboard table
+  - Simplified table to show only Rank, Model, Score, and Time (s) columns
+  - Token usage information still stored in JSON but no longer displayed in markdown table
+
 ## [0.5.0] - 2025-12-05
 
 ### Added
