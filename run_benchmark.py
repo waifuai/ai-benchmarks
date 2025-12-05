@@ -292,7 +292,7 @@ Examples:
         """
     )
     
-    parser.add_argument("--input", "-i", help="Path to file containing LLM output")
+    parser.add_argument("--input", "-i", default="input.txt", help="Path to file containing LLM output (default: input.txt)")
     parser.add_argument("--json", "-j", action="store_true", help="Output as JSON")
     parser.add_argument("--benchmark", "-b", default="maze", choices=["maze"])
     parser.add_argument("--leaderboard", "-l", action="store_true", help="Display leaderboard")
@@ -314,10 +314,11 @@ Examples:
         show_leaderboard(args.benchmark)
         return
     
-    # Default behavior: require input file
-    if not args.input:
-        parser.print_help()
-        print("\\n[ERROR] Please provide an input file with --input")
+    # Check if the input file exists
+    input_path = Path(args.input)
+    if not input_path.exists():
+        print(f"\\n[ERROR] Input file not found: {args.input}")
+        print("Use --input to specify a different file, or create input.txt")
         sys.exit(1)
     
     try:

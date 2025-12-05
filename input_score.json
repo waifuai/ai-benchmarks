@@ -1,0 +1,65 @@
+{
+  "score": 652.39,
+  "base_score": 652.39,
+  "structure_penalty": 0,
+  "components": {
+    "ambition": {
+      "score": 564.39,
+      "description": "Grid 5x10 (size: 50) -> 100*log2",
+      "details": {
+        "rows": 5,
+        "cols": 10,
+        "grid_size": 50
+      }
+    },
+    "complexity": {
+      "score": 0,
+      "description": "0 Key/Door pairs solved x 50",
+      "details": {
+        "keys_collected": [],
+        "path_length": 9
+      }
+    },
+    "path_efficiency": {
+      "score": 18.0,
+      "description": "Optimal path uses 9/50 cells (18.0%)",
+      "details": {
+        "path_length": 9,
+        "grid_size": 50,
+        "efficiency_ratio": 0.18
+      }
+    },
+    "completion": {
+      "score": 50,
+      "description": "Successfully reached End 'E'",
+      "details": {
+        "solvable": true
+      }
+    },
+    "danger": {
+      "score": 20.0,
+      "description": "1 strategic traps on solution path (sqrt scaled)",
+      "details": {
+        "adjacent_traps": 1,
+        "scaling": "sqrt"
+      }
+    }
+  },
+  "maze_info": {
+    "dimensions": "5x10",
+    "solvable": true,
+    "keys_collected": [],
+    "chain_length": 0,
+    "path_length": 9,
+    "elements": {
+      "S": 1,
+      "E": 1,
+      "K": 1,
+      "D": 1,
+      "T": 2,
+      "#": 11
+    },
+    "complexity_ratio": 0.26,
+    "timeout": false
+  }
+}

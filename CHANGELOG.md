@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.4.0] - 2025-12-05
+## [0.4.1]
+
+### Added
+- **Default Input File**: `run_benchmark.py` now defaults to `input.txt` when no `--input` parameter is specified
+- **Enhanced Error Handling**: Improved user experience with clear error messages when the default input file doesn't exist
+- **Backward Compatibility**: Users can still specify alternative input files using `--input` flag
+
+### Changed
+- **CLI Interface**: Simplified usage - system automatically uses `input.txt` by default without requiring explicit specification
+
+## [0.4.0]
 
 ### Removed
 - **OpenRouter Integration**: Removed all OpenRouter API integration and live model benchmarking
@@ -20,7 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Manual Ingestion**: Enhanced `--ingest` feature for processing multiple model outputs from single file
 - **File Processing**: Streamlined workflow for benchmark evaluation from saved outputs
 
-## [0.3.0] - 2025-12-05
+## [0.3.0]
 
 ### Added
 - **Enhanced Maze Parsing & Validation**: Fixed regex extraction to handle various LLM output formats including metadata like "TIME: 275s"
@@ -53,13 +63,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **System Compatibility**: Re-scored existing mazes ensuring calculation consistency
 - **Real-world Testing**: Parsing tested with real-world LLM output variations
 
-## [0.2.3] - 2025-12-05
+## [0.2.3]
 
 ### Added
 - **Retry Logic**: Added `--retries` flag to `run_benchmark.py` (default: 1).
 - Automatic retry for blank LLM outputs to improve benchmark reliability.
 
-## [0.2.2] - 2025-12-05
+## [0.2.2]
 
 ### Added
 - **Multi-Key Maze Logic**: Support for alphabet-based keys (`a`-`z`) and doors (`A`-`Z`).
@@ -76,7 +86,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Adjusted **Danger** score to use diminishing returns (sqrt) for adjacent traps.
   - Fixed `ZeroDivisionError` in complexity ratio calculation.
 
-## [0.2.1] - 2025-12-05
+## [0.2.1]
 
 ### Added
 - **Progress bars**: `tqdm` integration for visual progress during sequential benchmarking
@@ -88,7 +98,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.2.0] - 2025-12-05
+## [0.2.0]
 
 ### Added
 - **Live benchmarking**: Direct API calls for model benchmarking (removed in later version)
@@ -110,7 +120,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.1.1] - 2025-12-05
+## [0.1.1]
 
 ### Added
 - **Maze size limit**: Mazes are now limited to 32x32. Mazes exceeding this limit will receive a score of 0 with an error message.
@@ -121,14 +131,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.1.0] - 2025-12-02
+## [0.1.0]
 
 ### Added
-- Initial maze benchmark implementation (`c3002ed`)
+- Initial maze benchmark implementation
 - Maze Gauntlet Evaluator with gradient scoring system
 - Support for ASCII maze parsing from LLM output
 - Scoring components: Ambition, Progress, Objectives, Proximity, Danger
 - CLI runner (`run_benchmark.py`)
 
 ### Removed
-- Leaderboard feature (`555d259`)
+- Leaderboard feature
