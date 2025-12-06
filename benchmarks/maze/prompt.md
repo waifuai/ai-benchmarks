@@ -2,38 +2,35 @@ You are an Architect AI in the "Strategic Maze Benchmark."
 Your task is to generate a SINGLE ASCII maze that maximizes a continuous score based on strategic thinking, route planning, and puzzle complexity.
 
 **The Enhanced Scoring Rules:**
-1. **Ambition:** Points for Grid Size + Strategic Elements (`100 * log2(Rows * Cols)` + element bonuses).
-2. **Strategic Innovation:** +15 points per teleporter, +20 per switch, +25 per conditional door used.
-3. **Route Complexity:** Points for multiple viable solution paths and decision points.
-4. **Bonus Objectives:** +75 points per optional challenge completed (bonus exits, conditional doors).
+1. **Ambition:** Points for Grid Size + Strategic Elements (`100 * log2(Rows * Cols)`).
+2. **Strategic Innovation:** +15 points per teleporter pair, +20 per switch, +25 per conditional door used.
+3. **Route Complexity:** Points for requiring backtracking and key collection chains.
+4. **Bonus Objectives:** +75 points per optional exit reachable ('F', 'G', 'H').
 5. **Completion:** +50 Points for reaching End ('E').
 6. **Path Efficiency:** Points for optimizing the path length relative to grid size.
 7. **Strategic Danger:** Limited to 30 points maximum for quality trap placement.
 
-**New Strategic Elements (Use creatively!):**
-- **Teleporters:** 'O' (origin) and 'Q' (destination) - single-use quick travel
-- **Switches & Gates:** 's' toggles 'S' gates on/off for dynamic routing
-- **Movable Blocks:** 'B' can be pushed to create bridges or block paths
-- **Bonus Exits:** 'F', 'G', 'H' provide extra points when reached
-- **Conditional Doors:** 'X' (needs 2+ keys), 'Y' (needs switch), 'Z' (needs both)
+**Strategic Elements & Logic:**
+- **Start/End:** 'S' (Start) and 'E' (End).
+- **Standard Walls:** '#'
+- **Traps:** 'T' (Avoid these).
+- **Teleporters:** 'O' (Entry) -> 'Q' (Exit). One-way instant travel.
+- **Switch:** 's' (lowercase). Toggles state to OPEN 'Y' and 'Z' doors.
+- **Movable Blocks:** 'B' (Counts as a wall, but conceptually movable for puzzle logic).
+- **Bonus Exits:** 'F', 'G', 'H' (Optional targets for extra points).
 
-**The Logic (Enhanced Multi-Key Lock System):**
-- **Keys:** Lowercase letters (`a`, `b`, `c`...)
-- **Doors:** Uppercase letters (`A`, `B`, `C`...)
-- **Rule:** You CANNOT pass a Door until you have collected its matching Key.
-- **Goal:** Create mazes that require strategic planning and creative problem-solving.
-
-**Design Principles:**
-- **Quality over Quantity:** Strategic elements beat trap-spamming
-- **Multiple Solutions:** Reward mazes with various valid approaches
-- **Innovation Bonus:** Creative combinations of strategic elements
-- **Balanced Complexity:** Too many elements can make mazes unsolvable
+**Lock & Key System:**
+- **Standard Keys:** Lowercase letters (`a`, `b`, `c`...)
+- **Standard Doors:** Uppercase letters (`A`, `B`, `C`...) -> Require matching key (a->A).
+- **Conditional Door 'X':** Requires holding at least 2 standard keys to pass.
+- **Conditional Door 'Y':** Requires activating Switch 's' to pass.
+- **Conditional Door 'Z':** Requires BOTH Switch 's' AND at least 1 standard key.
 
 **Strict Constraints:**
-- **Structure:** Walls should generally outnumber traps (more lenient than before)
-- **Size:** Max 64x64.
+- **Structure:** Walls must outline the valid paths clearly.
+- **Size:** Max 32x32 (for reliable rendering).
 - **Solvability:** The maze MUST be solvable from 'S' to 'E'.
-- **Logic:** All strategic elements should serve the puzzle, not complicate it randomly
+- **Constraint:** 'S' (Start) and 's' (Switch) are different. Do not confuse them.
 
 **Output Format:**
 - ONLY the maze grid in a markdown code block.

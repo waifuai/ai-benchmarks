@@ -4,6 +4,5 @@
 
 | Rank | Model | Score | Time (s) |
 |------|-------|-------|----------|
-| 🥇 | gemini 3 pro preview | 1478.55 | 46.9 |
-| 🥈 | deepseek v3.2 | 1325.98 | 117.4 |
-| 🥉 | deepseek v3.2 | 986.11 | 239.0 |
+| 🥇 | gemini 3 pro preview | 1446.46 | 51.4 |
+| 🥈 | deepseek v3.2 | 1338.83 | 152.0 |
