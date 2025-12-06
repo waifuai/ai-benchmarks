@@ -11,11 +11,28 @@ pip install -r requirements.txt
 # Run benchmark on LLM output file
 python run_benchmark.py --input path_to_llm_output.txt
 
+# Run benchmark against an OpenRouter model
+python run_benchmark.py --model google/gemini-2.0-flash-exp:free --benchmark maze
+
 # Run and save to leaderboard
 python run_benchmark.py --input llm_output.txt --add-to-leaderboard
 
 # View the leaderboard
 python run_benchmark.py --leaderboard
+
+# Run all models from models.txt
+python run_benchmark.py --run-all
+```
+
+### OpenRouter Setup
+
+Set your API key as an environment variable:
+```bash
+# Windows
+set OPENROUTER_API_KEY=your_key_here
+
+# Linux/Mac
+export OPENROUTER_API_KEY=your_key_here
 ```
 
 ## 🏆 Leaderboard System
@@ -79,7 +96,9 @@ ai-benchmark/
 ├── README.md               # This file
 ├── CHANGELOG.md            # Version history
 ├── requirements.txt        # Dependencies
+├── models.txt              # Available models for testing
 ├── run_benchmark.py        # CLI Entry point
+├── openrouter.py           # OpenRouter API client
 ├── leaderboard.py          # Leaderboard management
 ├── leaderboard.json        # Stored benchmark results
 └── benchmarks/
@@ -110,6 +129,15 @@ python run_benchmark.py --input sample_llm_output.txt --add-to-leaderboard
 
 # Get JSON output
 python run_benchmark.py --input sample_llm_output.txt --json
+
+# Test a specific model from models.txt
+python run_benchmark.py --model google/gemini-2.0-flash-exp:free --benchmark maze
+
+# Test a different model
+python run_benchmark.py --model meta-llama/llama-3.3-70b-instruct:Free --add-to-leaderboard
+
+# Run all models from models.txt
+python run_benchmark.py --run-all --sequential
 ```
 
 The output will be a detailed JSON report showing your score breakdown.

@@ -7,7 +7,9 @@ Main entry point for running LLM spatial reasoning benchmarks.
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 from benchmarks.maze.evaluator import grade_maze
 from benchmarks.maze.strategic_evaluator import grade_strategic_maze
@@ -83,11 +85,172 @@ def format_score_report(result: dict) -> str:
     return "\\n".join(report)
 
 
+def run_benchmark_on_model(model: str, benchmark: str, retries: int = 1) -> dict:
+    """Run a benchmark against an OpenRouter model."""
+    from openrouter import OpenRouterClient, get_prompt_for_benchmark
+    
+    client = OpenRouterClient()
+    prompt = get_prompt_for_benchmark(benchmark)
+    
+    # Generate response with timing and retries
+    attempt = 0
+    while attempt <= retries:
+        start_time = time.time()
+        try:
+            response = client.generate(model, prompt)
+            llm_output = response["content"]
+            
+            if llm_output and llm_output.strip():
+                # valid output obtained
+                break
+                
+            print(f"[WARNING] Empty response from {model} (Attempt {attempt+1}/{retries+1}). Retrying...")
+        except Exception as e:
+            print(f"[WARNING] Error generating response from {model}: {e} (Attempt {attempt+1}/{retries+1}). Retrying...")
+            # If it's the last attempt, re-raise or let it fall through? 
+            # Original code didn't catch generation errors here really, but main does.
+            # Let's just continue to retry loop.
+            if attempt == retries:
+                raise e
+        
+        attempt += 1
+        
+    elapsed_time = time.time() - start_time
+    
+    # If we still have no output after retries (and no exception raised)
+    if not llm_output or not llm_output.strip():
+         # Depending on how we want to handle it. Original code would just crash or produce empty file.
+         # Let's make sure we have something to save, or maybe returning empty is fine if that's what happened.
+         pass
+    
+    # Save the LLM output to output/<model-name>/
+    safe_model_name = model.replace("/", "_").replace(":", "_")
+    output_dir = Path(__file__).parent / "output" / safe_model_name
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    output_file = output_dir / f"{benchmark}.txt"
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(llm_output)
+    
+    # Grade the response
+    if benchmark == "maze":
+        result = grade_strategic_maze(llm_output)
+    else:
+        raise ValueError(f"Unknown benchmark: {benchmark}")
+    
+    # Add model info to result
+    result["model"] = model
+    result["llm_response"] = llm_output
+    result["token_usage"] = response["usage"]
+    result["elapsed_seconds"] = round(elapsed_time, 2)
+    
+    return result
+
+
 def show_leaderboard(benchmark: str = None):
     """Display the current leaderboard."""
     from leaderboard import Leaderboard
     lb = Leaderboard()
     print(lb.format_cli_table(benchmark))
+
+
+def benchmark_single_model(model: str, benchmark: str, retries: int = 1):
+    """Benchmark a single model and return result tuple."""
+    try:
+        result = run_benchmark_on_model(model, benchmark, retries)
+        return (model, result, None)
+    except Exception as e:
+        return (model, None, str(e))
+
+
+def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
+    """Run benchmarks on all models from models.txt, skipping those already tested."""
+    from leaderboard import Leaderboard
+    
+    models_file = Path(__file__).parent / "models.txt"
+    if not models_file.exists():
+        print("[ERROR] models.txt not found")
+        return
+    
+    lb = Leaderboard()
+    
+    with open(models_file, 'r', encoding='utf-8') as f:
+        all_models = [line.strip() for line in f if line.strip()]
+    
+    # Filter out already tested models
+    models_to_test = []
+    for model in all_models:
+        existing = lb.get_result(model, benchmark)
+        if existing:
+            print(f"[SKIP] {model} - already has score: {existing['score']}")
+        else:
+            models_to_test.append(model)
+    
+    if not models_to_test:
+        print("[DONE] All models already tested")
+        show_leaderboard(benchmark)
+        return
+    
+    print(f"\\n[RUN-ALL] Testing {len(models_to_test)} models {'sequentially' if sequential else 'in parallel'}...")
+    
+    tested = 0
+    errors = 0
+    
+    if sequential:
+        # Sequential execution with progress bar
+        for model in tqdm(models_to_test, desc="Benchmarking", unit="model"):
+            tqdm.write(f"[TESTING] {model}")
+            model_name, result, error = benchmark_single_model(model, benchmark, retries)
+            
+            if error:
+                tqdm.write(f"[ERROR] {model}: {error}")
+                errors += 1
+            else:
+                lb.add_result(
+                    model_name,
+                    benchmark,
+                    result["score"],
+                    {
+                        "token_usage": result.get("token_usage", {}),
+                        "elapsed_seconds": result.get("elapsed_seconds", 0)
+                    }
+                )
+                tqdm.write(f"[DONE] {model}: Score {result['score']} ({result.get('elapsed_seconds', 0)}s)")
+                tested += 1
+    else:
+        # Parallel execution
+        print(f"[PARALLEL] Starting {len(models_to_test)} concurrent API calls...")
+        
+        with ThreadPoolExecutor(max_workers=len(models_to_test)) as executor:
+            futures = {
+                executor.submit(benchmark_single_model, model, benchmark, retries): model 
+                for model in models_to_test
+            }
+            
+            for future in as_completed(futures):
+                model_name, result, error = future.result()
+                
+                if error:
+                    print(f"[ERROR] {model_name}: {error}")
+                    errors += 1
+                else:
+                    lb.add_result(
+                        model_name,
+                        benchmark,
+                        result["score"],
+                        {
+                            "token_usage": result.get("token_usage", {}),
+                            "elapsed_seconds": result.get("elapsed_seconds", 0)
+                        }
+                    )
+                    print(f"[DONE] {model_name}: Score {result['score']} ({result.get('elapsed_seconds', 0)}s)")
+                    tested += 1
+    
+    print(f"\\n{'='*60}")
+    print(f"[COMPLETE] Tested: {tested}, Errors: {errors}")
+    print('='*60)
+    
+    show_leaderboard(benchmark)
 
 
 def rescore_all_outputs(benchmark: str):
@@ -209,7 +372,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
             return
             
         # Split content by "model:" (case-insensitive) to find blocks
-        model_header_pattern = re.compile(r'^(?:model|MODEL):\s*(.+)$', re.MULTILINE)
+        model_header_pattern = re.compile(r'^(?:model|MODEL):\\s*(.+)$', re.MULTILINE)
         
         matches = list(model_header_pattern.finditer(content))
         
@@ -229,7 +392,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
             block_content = content[start_pos:end_pos]
             
             # Extract time if present
-            time_match = re.search(r'(?m)^(?:time|TIME):\s*([\d\.]+)s?', block_content)
+            time_match = re.search(r'(?m)^(?:time|TIME):\\s*([\\d\\.]+)', block_content)
             elapsed_seconds = 0.0
             if time_match:
                 try:
@@ -303,17 +466,24 @@ def main():
         epilog="""
 Examples:
   python run_benchmark.py --input llm_output.txt
+  python run_benchmark.py --model openai/gpt-4 --add-to-leaderboard
+  python run_benchmark.py --run-all
+  python run_benchmark.py --run-all --sequential
   python run_benchmark.py --leaderboard
   python run_benchmark.py --rescore
   python run_benchmark.py --ingest output.txt
         """
     )
     
-    parser.add_argument("--input", "-i", default="input.txt", help="Path to file containing LLM output (default: input.txt)")
+    parser.add_argument("--input", "-i", help="Path to file containing LLM output")
+    parser.add_argument("--model", "-m", help="OpenRouter model to benchmark")
     parser.add_argument("--json", "-j", action="store_true", help="Output as JSON")
     parser.add_argument("--benchmark", "-b", default="maze", choices=["maze"])
     parser.add_argument("--leaderboard", "-l", action="store_true", help="Display leaderboard")
     parser.add_argument("--add-to-leaderboard", "-a", action="store_true", help="Save to leaderboard")
+    parser.add_argument("--run-all", action="store_true", help="Run all models from models.txt")
+    parser.add_argument("--sequential", "-s", action="store_true", help="Run sequentially instead of parallel")
+    parser.add_argument("--retries", type=int, default=1, help="Number of retries on empty output (default: 1)")
     parser.add_argument("--rescore", action="store_true", help="Re-score all existing mazes in output/ directory")
     parser.add_argument("--ingest", help="Path to file for manual ingestion (Format: Line 1 'MODEL: name', rest is maze)")
     
@@ -331,22 +501,40 @@ Examples:
         show_leaderboard(args.benchmark)
         return
     
-    # Check if the input file exists
-    input_path = Path(args.input)
-    if not input_path.exists():
-        print(f"\\n[ERROR] Input file not found: {args.input}")
-        print("Use --input to specify a different file, or create input.txt")
-        sys.exit(1)
+    # Default behavior: run-all sequentially if no specific action is specified
+    if not args.input and not args.model:
+        # Default to sequential unless --run-all is explicitly used (which respects --sequential flag)
+        run_all_models(args.benchmark, sequential=True if not args.run_all else args.sequential, retries=args.retries)
+        return
     
     try:
-        print(f"[READING] LLM output from: {args.input}")
-        llm_output = read_llm_output(args.input)
-        
-        if args.benchmark == "maze":
-            print("[RUNNING] Strategic Maze benchmark...")
-            result = grade_strategic_maze(llm_output)
+        if args.model:
+            print(f"[BENCHMARK] Running {args.benchmark} benchmark on {args.model}")
+            result = run_benchmark_on_model(args.model, args.benchmark, args.retries)
+            print(f"[RECEIVED] Response ({result['token_usage']['completion_tokens']} tokens) in {result['elapsed_seconds']}s")
+            
+            if args.add_to_leaderboard:
+                from leaderboard import Leaderboard
+                lb = Leaderboard()
+                lb.add_result(
+                    args.model, 
+                    args.benchmark, 
+                    result["score"],
+                    {
+                        "token_usage": result.get("token_usage", {}),
+                        "elapsed_seconds": result.get("elapsed_seconds", 0)
+                    }
+                )
+                print(f"[SAVED] Score added to leaderboard")
         else:
-            raise ValueError(f"Unknown benchmark: {args.benchmark}")
+            print(f"[READING] LLM output from: {args.input}")
+            llm_output = read_llm_output(args.input)
+            
+            if args.benchmark == "maze":
+                print("[RUNNING] Strategic Maze benchmark...")
+                result = grade_strategic_maze(llm_output)
+            else:
+                raise ValueError(f"Unknown benchmark: {args.benchmark}")
         
         if args.json:
             output_result = {k: v for k, v in result.items() if k != "llm_response"}

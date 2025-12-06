@@ -4,6 +4,61 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.7.0]
+
+### Added
+- **OpenRouter API Integration**: Complete OpenRouter client implementation for live model benchmarking
+  - Direct API calls to OpenRouter models with `--model` flag
+  - Automatic API key management from file or environment variable
+  - Built-in retry logic with exponential backoff for rate limits and server errors
+  - Token usage tracking and timing metrics for all API calls
+- **Batch Benchmarking**: Run benchmarks on multiple models simultaneously
+  - `--run-all` flag to test all models from `models.txt`
+  - `--sequential` flag for one-at-a-time execution with progress bars
+  - Parallel execution with ThreadPoolExecutor for faster batch testing
+  - Automatic skipping of already-tested models to avoid duplicate work
+  - Real-time progress tracking with tqdm integration
+- **Enhanced Leaderboard System**: Improved tracking and display of benchmark results
+  - Failed runs tracking with separate display section (Score: -100)
+  - Medal emojis (🥇🥈🥉) for top 3 performers
+  - Separate sections for successful vs failed runs
+  - Multiple runs support per model with timestamp tracking
+- **Improved Error Handling**: Robust error management across all components
+  - Graceful handling of empty LLM responses with configurable retries
+  - Rate limit detection and automatic retry with exponential backoff
+  - Clear error messages for API failures, timeouts, and invalid responses
+  - Safe file operations with proper exception handling
+
+### Changed
+- **CLI Interface Overhaul**: Completely restructured command-line interface
+  - Default behavior changed to sequential batch mode when no specific action is provided
+  - `--model` flag for direct OpenRouter model testing
+  - `--retries` parameter for configuring empty response retry attempts
+  - Enhanced help text with comprehensive usage examples
+- **Leaderboard Display**: Enhanced markdown formatting with better organization
+  - Separate sections for successful and failed benchmark runs
+  - Improved table formatting with rank numbers and medal indicators
+  - Time tracking display for all benchmark runs
+  - Better visual hierarchy with section headers and spacing
+- **README Updates**: Comprehensive documentation updates
+  - Added OpenRouter setup instructions for API key configuration
+  - New usage examples for batch processing and individual model testing
+  - Updated architecture diagram to include new components
+  - Enhanced quick start section with practical examples
+
+### Improved
+- **Performance**: Optimized batch processing with parallel execution support
+- **User Experience**: Better progress feedback and error messages
+- **Reliability**: Robust retry mechanisms and error recovery
+- **Scalability**: Support for testing multiple models efficiently
+- **Documentation**: Comprehensive examples and setup instructions
+
+### Updated
+- **Leaderboard Results**: Latest benchmark results with new model rankings
+  - Added 8 new model results (4 successful, 4 failed)
+  - Updated top performers: gemini 3 pro preview (1446.46), deepseek v3.2 (1338.83)
+  - Enhanced result tracking with timing and token usage metrics
+
 ## [0.6.0]
 
 ### Added

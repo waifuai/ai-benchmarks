@@ -207,30 +207,53 @@ class Leaderboard:
             if not rankings:
                 continue
             
+            # Separate successful runs (score > -100) from failed runs (score = -100)
+            successful_models = [entry for entry in rankings if entry["score"] > -100]
+            failed_models = [entry for entry in rankings if entry["score"] == -100]
+            
             lines.append(f"## {bench.title()} Benchmark\n")
-            lines.append("| Rank | Model | Score | Time (s) |")
-            lines.append("|------|-------|-------|----------|")
             
-            for entry in rankings:
-                # Medal for top 3
-                rank_display = entry["rank"]
-                if rank_display == 1:
-                    rank_display = "🥇"
-                elif rank_display == 2:
-                    rank_display = "🥈"
-                elif rank_display == 3:
-                    rank_display = "🥉"
+            # Successful models section
+            if successful_models:
+                lines.append("### 🏆 Successful Runs")
+                lines.append("| Rank | Model | Score | Time (s) |")
+                lines.append("|------|-------|-------|----------|")
                 
-                # Get details
-                details = entry.get("details", {})
-                elapsed = details.get("elapsed_seconds", 0)
-                
-                lines.append(
-                    f"| {rank_display} | {entry['model']} | "
-                    f"{entry['score']:.2f} | {elapsed:.1f} |"
-                )
+                for entry in successful_models:
+                    # Medal for top 3
+                    rank_display = entry["rank"]
+                    if rank_display == 1:
+                        rank_display = "🥇"
+                    elif rank_display == 2:
+                        rank_display = "🥈"
+                    elif rank_display == 3:
+                        rank_display = "🥉"
+                    
+                    # Get details
+                    details = entry.get("details", {})
+                    elapsed = details.get("elapsed_seconds", 0)
+                    
+                    lines.append(
+                        f"| {rank_display} | {entry['model']} | "
+                        f"{entry['score']:.2f} | {elapsed:.1f} |"
+                    )
+                lines.append("")
             
-            lines.append("")
+            # Failed models section
+            if failed_models:
+                lines.append("### ❌ Failed Runs (Score: -100)")
+                lines.append("| Rank | Model | Time (s) |")
+                lines.append("|------|-------|----------|")
+                
+                for i, entry in enumerate(failed_models, 1):
+                    # Get details
+                    details = entry.get("details", {})
+                    elapsed = details.get("elapsed_seconds", 0)
+                    
+                    lines.append(
+                        f"| {i} | {entry['model']} | {elapsed:.1f} |"
+                    )
+                lines.append("")
         
         return "\n".join(lines)
     
