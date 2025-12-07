@@ -85,43 +85,26 @@ def format_score_report(result: dict) -> str:
     return "\\n".join(report)
 
 
-def run_benchmark_on_model(model: str, benchmark: str, retries: int = 1) -> dict:
+def run_benchmark_on_model(model: str, benchmark: str) -> dict:
     """Run a benchmark against an OpenRouter model."""
     from openrouter import OpenRouterClient, get_prompt_for_benchmark
     
     client = OpenRouterClient()
     prompt = get_prompt_for_benchmark(benchmark)
     
-    # Generate response with timing and retries
-    attempt = 0
-    while attempt <= retries:
-        start_time = time.time()
-        try:
-            response = client.generate(model, prompt)
-            llm_output = response["content"]
-            
-            if llm_output and llm_output.strip():
-                # valid output obtained
-                break
-                
-            print(f"[WARNING] Empty response from {model} (Attempt {attempt+1}/{retries+1}). Retrying...")
-        except Exception as e:
-            print(f"[WARNING] Error generating response from {model}: {e} (Attempt {attempt+1}/{retries+1}). Retrying...")
-            # If it's the last attempt, re-raise or let it fall through? 
-            # Original code didn't catch generation errors here really, but main does.
-            # Let's just continue to retry loop.
-            if attempt == retries:
-                raise e
+    # Generate response (no retries - move to next model on failure)
+    start_time = time.time()
+    try:
+        response = client.generate(model, prompt)
+        llm_output = response["content"]
         
-        attempt += 1
+        if not llm_output or not llm_output.strip():
+            raise ValueError(f"Empty response from model {model}")
+            
+    except Exception as e:
+        raise Exception(f"Error generating response from {model}: {e}")
         
     elapsed_time = time.time() - start_time
-    
-    # If we still have no output after retries (and no exception raised)
-    if not llm_output or not llm_output.strip():
-         # Depending on how we want to handle it. Original code would just crash or produce empty file.
-         # Let's make sure we have something to save, or maybe returning empty is fine if that's what happened.
-         pass
     
     # Save the LLM output to output/<model-name>/
     safe_model_name = model.replace("/", "_").replace(":", "_")
@@ -154,10 +137,10 @@ def show_leaderboard(benchmark: str = None):
     print(lb.format_cli_table(benchmark))
 
 
-def benchmark_single_model(model: str, benchmark: str, retries: int = 1):
+def benchmark_single_model(model: str, benchmark: str):
     """Benchmark a single model and return result tuple."""
     try:
-        result = run_benchmark_on_model(model, benchmark, retries)
+        result = run_benchmark_on_model(model, benchmark)
         return (model, result, None)
     except Exception as e:
         return (model, None, str(e))
@@ -198,12 +181,16 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
     
     if sequential:
         # Sequential execution with progress bar
-        for model in tqdm(models_to_test, desc="Benchmarking", unit="model"):
+        pbar = tqdm(total=len(models_to_test), desc="Benchmarking", unit="model")
+        
+        for model in models_to_test:
             tqdm.write(f"[TESTING] {model}")
-            model_name, result, error = benchmark_single_model(model, benchmark, retries)
+            model_name, result, error = benchmark_single_model(model, benchmark)
             
             if error:
                 tqdm.write(f"[ERROR] {model}: {error}")
+                # Remove this failed/skipped model from total count
+                pbar.total -= 1
                 errors += 1
             else:
                 lb.add_result(
@@ -217,13 +204,17 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
                 )
                 tqdm.write(f"[DONE] {model}: Score {result['score']} ({result.get('elapsed_seconds', 0)}s)")
                 tested += 1
+            
+            pbar.update(1)
+        
+        pbar.close()
     else:
         # Parallel execution
         print(f"[PARALLEL] Starting {len(models_to_test)} concurrent API calls...")
         
         with ThreadPoolExecutor(max_workers=len(models_to_test)) as executor:
             futures = {
-                executor.submit(benchmark_single_model, model, benchmark, retries): model 
+                executor.submit(benchmark_single_model, model, benchmark): model 
                 for model in models_to_test
             }
             
@@ -483,7 +474,7 @@ Examples:
     parser.add_argument("--add-to-leaderboard", "-a", action="store_true", help="Save to leaderboard")
     parser.add_argument("--run-all", action="store_true", help="Run all models from models.txt")
     parser.add_argument("--sequential", "-s", action="store_true", help="Run sequentially instead of parallel")
-    parser.add_argument("--retries", type=int, default=1, help="Number of retries on empty output (default: 1)")
+    parser.add_argument("--retries", type=int, default=0, help="Number of retries on empty output (default: 0)")
     parser.add_argument("--rescore", action="store_true", help="Re-score all existing mazes in output/ directory")
     parser.add_argument("--ingest", help="Path to file for manual ingestion (Format: Line 1 'MODEL: name', rest is maze)")
     
@@ -510,7 +501,7 @@ Examples:
     try:
         if args.model:
             print(f"[BENCHMARK] Running {args.benchmark} benchmark on {args.model}")
-            result = run_benchmark_on_model(args.model, args.benchmark, args.retries)
+            result = run_benchmark_on_model(args.model, args.benchmark)
             print(f"[RECEIVED] Response ({result['token_usage']['completion_tokens']} tokens) in {result['elapsed_seconds']}s")
             
             if args.add_to_leaderboard:

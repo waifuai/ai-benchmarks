@@ -5,10 +5,11 @@
 ### 🏆 Successful Runs
 | Rank | Model | Score | Time (s) |
 |------|-------|-------|----------|
-| 🥇 | gemini 3 pro preview | 1446.46 | 51.4 |
-| 🥈 | deepseek v3.2 | 1338.83 | 152.0 |
-| 🥉 | tngtech/deepseek-r1t-chimera:free | 1213.26 | 37.2 |
-| 4 | google/gemma-3-27b-it:free | 1065.95 | 11.0 |
+| 🥇 | meta-llama/llama-3.3-70b-instruct:free | 1640.68 | 36.3 |
+| 🥈 | gemini 3 pro preview | 1446.46 | 51.4 |
+| 🥉 | deepseek v3.2 | 1338.83 | 152.0 |
+| 4 | tngtech/deepseek-r1t-chimera:free | 1213.26 | 37.2 |
+| 5 | google/gemma-3-27b-it:free | 1065.95 | 11.0 |
 
 ### ❌ Failed Runs (Score: -100)
 | Rank | Model | Time (s) |
@@ -21,3 +22,4 @@
 | 6 | qwen/qwen3-coder:free | 14.9 |
 | 7 | amazon/nova-2-lite-v1:free | 13.6 |
 | 8 | openai/gpt-oss-20b:free | 9.5 |
+| 9 | cognitivecomputations/dolphin-mistral-24b-venice-edition:free | 28.7 |

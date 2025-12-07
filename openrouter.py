@@ -85,47 +85,33 @@ class OpenRouterClient:
             "temperature": temperature
         }
         
-        # Backoff parameters
-        retries = 0
-        max_retries = 5
-        base_delay = 10
-        max_delay = 120
-
-        while True:
-            try:
-                response = requests.post(
-                    url, 
-                    headers=self._get_headers(),
-                    json=payload,
-                    timeout=120  # 2 minute timeout for slow models
-                )
-                response.raise_for_status()
-                break  # Success, exit loop
-                
-            except requests.exceptions.HTTPError as e:
-                is_rate_limit = (e.response.status_code == 429)
-                is_server_error = (e.response.status_code >= 500)
-                
-                if (is_rate_limit or is_server_error) and retries < max_retries:
-                    retries += 1
-                    delay = min(base_delay * (2 ** (retries - 1)), max_delay)
-                    error_type = "Rate limit" if is_rate_limit else f"Server error {e.response.status_code}"
-                    print(f"[{error_type}] Retrying in {delay}s... (Attempt {retries}/{max_retries})")
-                    time.sleep(delay)
-                    continue
-                else:
-                    # Reraise if not retryable or retries exhausted
-                    if e.response.status_code == 401:
-                        raise ValueError("Invalid OpenRouter API key")
-                    elif e.response.status_code == 429:
-                        raise RuntimeError("Rate limit exceeded. Please wait and try again.")
-                    elif e.response.status_code == 400:
-                        error_msg = e.response.json().get("error", {}).get("message", str(e))
-                        raise ValueError(f"Bad request: {error_msg}")
-                    else:
-                        raise RuntimeError(f"API error: {e}")
-
+        # Make a single request - no retries, move to next model on failure
+        try:
+            response = requests.post(
+                url, 
+                headers=self._get_headers(),
+                json=payload,
+                timeout=120  # 2 minute timeout for slow models
+            )
+            response.raise_for_status()
             
+        except requests.exceptions.HTTPError as e:
+            # Handle specific error cases
+            if e.response.status_code == 401:
+                raise ValueError("Invalid OpenRouter API key")
+            elif e.response.status_code == 429:
+                raise RuntimeError("Rate limit exceeded. Moving to next model.")
+            elif e.response.status_code == 400:
+                error_msg = e.response.json().get("error", {}).get("message", str(e))
+                raise ValueError(f"Bad request: {error_msg}")
+            elif e.response.status_code >= 500:
+                raise RuntimeError(f"Server error {e.response.status_code}. Moving to next model.")
+            else:
+                raise RuntimeError(f"API error: {e}")
+        
+        except requests.exceptions.RequestException as e:
+            raise RuntimeError(f"Request failed: {e}. Moving to next model.")
+        
         data = response.json()
             
         # Extract the content from the response
