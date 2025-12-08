@@ -29,7 +29,7 @@ def read_llm_output(file_path: str) -> str:
 def format_score_report(result: dict) -> str:
     """Format the score report for pretty printing."""
     if "error" in result:
-        return f"[ERROR] {result['error']}\\nScore: {result['score']}"
+        return f"[ERROR] {result['error']}\nScore: {result['score']}"
     
     score = result["score"]
     base_score = result.get("base_score", 0)
@@ -82,7 +82,7 @@ def format_score_report(result: dict) -> str:
         report.append("[WARNING] This maze violates the structure constraint!")
         report.append("         Traps must not significantly outnumber walls.")
     
-    return "\\n".join(report)
+    return "\n".join(report)
 
 
 def run_benchmark_on_model(model: str, benchmark: str) -> dict:
@@ -146,6 +146,31 @@ def benchmark_single_model(model: str, benchmark: str):
         return (model, None, str(e))
 
 
+def move_model_to_skip(model_name: str):
+    """Move a failed model from models.txt to models_skip.txt."""
+    try:
+        root_dir = Path(__file__).parent
+        models_file = root_dir / "models.txt"
+        skip_file = root_dir / "models_skip.txt"
+        
+        # Add to skip file
+        with open(skip_file, 'a', encoding='utf-8') as f:
+            f.write(f"{model_name}\n")
+            
+        # Remove from models file
+        if models_file.exists():
+            with open(models_file, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+            
+            with open(models_file, 'w', encoding='utf-8') as f:
+                for line in lines:
+                    if line.strip() != model_name:
+                        f.write(line)
+                        
+    except Exception as e:
+        sys.stderr.write(f"[ERROR] Failed to move model to skip list: {e}\n")
+
+
 def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
     """Run benchmarks on all models from models.txt, skipping those already tested."""
     from leaderboard import Leaderboard
@@ -174,7 +199,7 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
         show_leaderboard(benchmark)
         return
     
-    print(f"\\n[RUN-ALL] Testing {len(models_to_test)} models {'sequentially' if sequential else 'in parallel'}...")
+    print(f"\n[RUN-ALL] Testing {len(models_to_test)} models {'sequentially' if sequential else 'in parallel'}...")
     
     tested = 0
     errors = 0
@@ -189,6 +214,8 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
             
             if error:
                 tqdm.write(f"[ERROR] {model}: {error}")
+                move_model_to_skip(model)
+                tqdm.write(f"[SKIP] Moved {model} to models_skip.txt")
                 # Remove this failed/skipped model from total count
                 pbar.total -= 1
                 errors += 1
@@ -223,6 +250,8 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
                 
                 if error:
                     print(f"[ERROR] {model_name}: {error}")
+                    move_model_to_skip(model_name)
+                    print(f"[SKIP] Moved {model_name} to models_skip.txt")
                     errors += 1
                 else:
                     lb.add_result(
@@ -237,7 +266,7 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
                     print(f"[DONE] {model_name}: Score {result['score']} ({result.get('elapsed_seconds', 0)}s)")
                     tested += 1
     
-    print(f"\\n{'='*60}")
+    print(f"\n{'='*60}")
     print(f"[COMPLETE] Tested: {tested}, Errors: {errors}")
     print('='*60)
     
@@ -338,7 +367,7 @@ def rescore_all_outputs(benchmark: str):
             except Exception as e:
                 errors += 1 
 
-    print(f"\\n[COMPLETE] Updated: {updated}, Errors: {errors}")
+    print(f"\n[COMPLETE] Updated: {updated}, Errors: {errors}")
     show_leaderboard(benchmark)
 
 
@@ -363,7 +392,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
             return
             
         # Split content by "model:" (case-insensitive) to find blocks
-        model_header_pattern = re.compile(r'^(?:model|MODEL):\\s*(.+)$', re.MULTILINE)
+        model_header_pattern = re.compile(r'^(?:model|MODEL):\s*(.+)$', re.MULTILINE)
         
         matches = list(model_header_pattern.finditer(content))
         
@@ -383,7 +412,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
             block_content = content[start_pos:end_pos]
             
             # Extract time if present
-            time_match = re.search(r'(?m)^(?:time|TIME):\\s*([\\d\\.]+)', block_content)
+            time_match = re.search(r'(?m)^(?:time|TIME):\s*([\d\.]+)', block_content)
             elapsed_seconds = 0.0
             if time_match:
                 try:
@@ -442,7 +471,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
             
             print(f"    - Score: {result['score']} (Time: {elapsed_seconds}s)")
 
-        print("\\n[SUCCESS] All entries processed and leaderboard updated.")
+        print("\n[SUCCESS] All entries processed and leaderboard updated.")
         show_leaderboard(benchmark)
         
     except Exception as e:
@@ -538,7 +567,7 @@ Examples:
                 timestamp = args.input.replace('.txt', '_score.json')
                 with open(timestamp, 'w', encoding='utf-8') as f:
                     json.dump(result, f, indent=2)
-                print(f"\\n[SAVED] Detailed results saved to: {timestamp}")
+                print(f"\n[SAVED] Detailed results saved to: {timestamp}")
         
         if args.add_to_leaderboard:
             print("")

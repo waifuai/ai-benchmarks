@@ -23,3 +23,10 @@
 | 7 | amazon/nova-2-lite-v1:free | 13.6 |
 | 8 | openai/gpt-oss-20b:free | 9.5 |
 | 9 | cognitivecomputations/dolphin-mistral-24b-venice-edition:free | 28.7 |
+| 10 | google/gemini-2.0-flash-exp:free | 3.5 |
+| 11 | nvidia/nemotron-nano-9b-v2:free | 198.3 |
+| 12 | arcee-ai/trinity-mini:free | 12.2 |
+| 13 | google/gemma-3-4b-it:free | 20.4 |
+| 14 | google/gemma-3-12b-it:free | 44.6 |
+| 15 | google/gemma-3n-e2b-it:free | 45.1 |
+| 16 | google/gemma-3n-e4b-it:free | 20.3 |
