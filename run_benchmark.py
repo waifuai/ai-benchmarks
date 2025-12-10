@@ -171,6 +171,31 @@ def move_model_to_skip(model_name: str):
         sys.stderr.write(f"[ERROR] Failed to move model to skip list: {e}\n")
 
 
+def move_model_to_limited(model_name: str):
+    """Move a rate-limited model from models.txt to models_limited.txt."""
+    try:
+        root_dir = Path(__file__).parent
+        models_file = root_dir / "models.txt"
+        limited_file = root_dir / "models_limited.txt"
+        
+        # Add to limited file
+        with open(limited_file, 'a', encoding='utf-8') as f:
+            f.write(f"{model_name}\n")
+            
+        # Remove from models file
+        if models_file.exists():
+            with open(models_file, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+            
+            with open(models_file, 'w', encoding='utf-8') as f:
+                for line in lines:
+                    if line.strip() != model_name:
+                        f.write(line)
+                        
+    except Exception as e:
+        sys.stderr.write(f"[ERROR] Failed to move model to limited list: {e}\n")
+
+
 def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
     """Run benchmarks on all models from models.txt, skipping those already tested."""
     from leaderboard import Leaderboard
@@ -214,9 +239,14 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
             
             if error:
                 tqdm.write(f"[ERROR] {model}: {error}")
-                move_model_to_skip(model)
-                tqdm.write(f"[SKIP] Moved {model} to models_skip.txt")
-                # Remove this failed/skipped model from total count
+                # Check if this is a rate limit error
+                if "Rate limit exceeded" in error:
+                    move_model_to_limited(model)
+                    tqdm.write(f"[LIMITED] Moved {model} to models_limited.txt")
+                else:
+                    move_model_to_skip(model)
+                    tqdm.write(f"[SKIP] Moved {model} to models_skip.txt")
+                # Remove this failed/limited model from total count
                 pbar.total -= 1
                 errors += 1
             else:
@@ -250,8 +280,13 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
                 
                 if error:
                     print(f"[ERROR] {model_name}: {error}")
-                    move_model_to_skip(model_name)
-                    print(f"[SKIP] Moved {model_name} to models_skip.txt")
+                    # Check if this is a rate limit error
+                    if "Rate limit exceeded" in error:
+                        move_model_to_limited(model_name)
+                        print(f"[LIMITED] Moved {model_name} to models_limited.txt")
+                    else:
+                        move_model_to_skip(model_name)
+                        print(f"[SKIP] Moved {model_name} to models_skip.txt")
                     errors += 1
                 else:
                     lb.add_result(
