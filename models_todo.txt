@@ -1,6 +1,4 @@
-meituan/longcat-flash-chat:free
 qwen/qwen3-235b-a22b:free
-alibaba/tongyi-deepresearch-30b-a3b:free
 mistralai/mistral-7b-instruct:free
 nousresearch/hermes-3-llama-3.1-405b:free
 allenai/olmo-3-32b-think:free
