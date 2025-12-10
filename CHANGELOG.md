@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.9.2]
+## [0.9.2] add logs
 
 ### Added
 - **Comprehensive Logging System**: New timestamped logging functionality for complete benchmark audit trail
@@ -25,7 +25,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Historical Tracking**: All model run results preserved in timestamped log files
 - **Operational Visibility**: Full visibility into batch processing with detailed progress logging
 
-## [0.9.1]
+## [0.9.1] separate rate limited models
 
 ### Added
 - **Rate Limit Error Separation**: New `models_limited.txt` file for tracking rate-limited models separately from failed models
@@ -38,7 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **User Experience**: Clearer feedback when models encounter rate limits during batch execution
 - **Retry Logic**: Models in `models_limited.txt` can be easily identified for later retry attempts
 
-## [0.9.0]
+## [0.9.0] add model skipping
 
 ### Added
 - **Model Skip System**: New `models_skip.txt` file for tracking failed or problematic models
@@ -69,7 +69,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Code Quality**: Cleaner string handling and more robust regex patterns
 - **Leaderboard Accuracy**: More reliable rankings with focus on consistently performing models
 
-## [0.8.0]
+## [0.8.0] no retries
 
 ### Changed
 - **Error Handling Strategy**: Completely removed retry mechanisms in favor of fail-fast approach
@@ -93,7 +93,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **Reliability**: Clear failure detection without hanging on problematic models
 - **User Experience**: More predictable execution times and clearer error feedback
 
-## [0.7.0]
+## [0.7.0] add openrouter
 
 ### Added
 - **OpenRouter API Integration**: Complete OpenRouter client implementation for live model benchmarking
@@ -148,7 +148,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Updated top performers: gemini 3 pro preview (1446.46), deepseek v3.2 (1338.83)
   - Enhanced result tracking with timing and token usage metrics
 
-## [0.6.0]
+## [0.6.0] fix prompt
 
 ### Added
 - **Strategic Maze Evaluator v2.0**: Complete rewrite of the maze evaluator system
@@ -295,7 +295,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - **CLI Interface**: Simplified usage - system automatically uses `input.txt` by default without requiring explicit specification
 
-## [0.4.0]
+## [0.4.0] remove openrouter
 
 ### Removed
 - **OpenRouter Integration**: Removed all OpenRouter API integration and live model benchmarking
@@ -344,13 +344,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **System Compatibility**: Re-scored existing mazes ensuring calculation consistency
 - **Real-world Testing**: Parsing tested with real-world LLM output variations
 
-## [0.2.3]
+## [0.2.3] add retry for blank output
 
 ### Added
 - **Retry Logic**: Added `--retries` flag to `run_benchmark.py` (default: 1).
 - Automatic retry for blank LLM outputs to improve benchmark reliability.
 
-## [0.2.2]
+## [0.2.2] multikey
 
 ### Added
 - **Multi-Key Maze Logic**: Support for alphabet-based keys (`a`-`z`) and doors (`A`-`Z`).
@@ -367,7 +367,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Adjusted **Danger** score to use diminishing returns (sqrt) for adjacent traps.
   - Fixed `ZeroDivisionError` in complexity ratio calculation.
 
-## [0.2.1]
+## [0.2.1] add models
 
 ### Added
 - **Progress bars**: `tqdm` integration for visual progress during sequential benchmarking
@@ -379,7 +379,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.2.0]
+## [0.2.0] add leaderboard
 
 ### Added
 - **Live benchmarking**: Direct API calls for model benchmarking (removed in later version)
@@ -401,7 +401,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.1.1]
+## [0.1.1] limit maze size
 
 ### Added
 - **Maze size limit**: Mazes are now limited to 32x32. Mazes exceeding this limit will receive a score of 0 with an error message.
@@ -412,7 +412,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
-## [0.1.0]
+## [0.1.0] add maze benchmark
 
 ### Added
 - Initial maze benchmark implementation
