@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.9.2]
+
+### Added
+- **Comprehensive Logging System**: New timestamped logging functionality for complete benchmark audit trail
+  - Automatic log file creation in `logs/YYYYMMDD-HHMM.txt` format (e.g., `logs/20251210-0413.txt`)
+  - Complete capture of all benchmark output including `[SKIP]`, `[RUN-ALL]`, `[TESTING]`, `[DONE]`, `[ERROR]`, `[LIMITED]` messages
+  - Dual output system: messages logged to file AND displayed in console (preserving existing behavior)
+  - Automatic logging initialization when script starts
+  - Full leaderboard logging for historical reference
+  - Enhanced audit trail for model run results with timestamps
+
+### Functions Added
+- `setup_logging()`: Creates logs directory and timestamped log file
+- `log_message(message)`: Unified logging to both file and console
+- Modified all core functions to integrate with logging system
+
+### Improved
+- **Debugging & Monitoring**: Complete audit trail of benchmark runs for troubleshooting and analysis
+- **Historical Tracking**: All model run results preserved in timestamped log files
+- **Operational Visibility**: Full visibility into batch processing with detailed progress logging
+
 ## [0.9.1]
 
 ### Added

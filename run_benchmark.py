@@ -8,12 +8,42 @@ import argparse
 import json
 import sys
 import time
+import os
+from datetime import datetime
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 from benchmarks.maze.evaluator import grade_maze
 from benchmarks.maze.strategic_evaluator import grade_strategic_maze
 
+# Global log file path
+LOG_FILE = None
+
+def setup_logging():
+    """Set up timestamped logging to logs/ directory."""
+    global LOG_FILE
+    
+    # Create logs directory if it doesn't exist
+    logs_dir = Path(__file__).parent / "logs"
+    logs_dir.mkdir(exist_ok=True)
+    
+    # Generate timestamped log filename
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M")
+    LOG_FILE = logs_dir / f"{timestamp}.txt"
+    
+    # Initialize log file with header
+    with open(LOG_FILE, 'w', encoding='utf-8') as f:
+        f.write(f"Benchmark Run - {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}\n")
+        f.write("=" * 60 + "\n\n")
+
+def log_message(message):
+    """Write a message to the log file and also print to console."""
+    if LOG_FILE:
+        with open(LOG_FILE, 'a', encoding='utf-8') as f:
+            f.write(message + "\n")
+    
+    # Also print to console (preserving existing behavior)
+    print(message)
 
 def read_llm_output(file_path: str) -> str:
     """Read the LLM output file and return its contents."""
@@ -134,7 +164,13 @@ def show_leaderboard(benchmark: str = None):
     """Display the current leaderboard."""
     from leaderboard import Leaderboard
     lb = Leaderboard()
-    print(lb.format_cli_table(benchmark))
+    leaderboard_text = lb.format_cli_table(benchmark)
+    print(leaderboard_text)
+    
+    # Also log the leaderboard
+    if LOG_FILE:
+        with open(LOG_FILE, 'a', encoding='utf-8') as f:
+            f.write("\n" + leaderboard_text + "\n")
 
 
 def benchmark_single_model(model: str, benchmark: str):
@@ -202,7 +238,7 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
     
     models_file = Path(__file__).parent / "models.txt"
     if not models_file.exists():
-        print("[ERROR] models.txt not found")
+        log_message("[ERROR] models.txt not found")
         return
     
     lb = Leaderboard()
@@ -215,16 +251,17 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
     for model in all_models:
         existing = lb.get_result(model, benchmark)
         if existing:
-            print(f"[SKIP] {model} - already has score: {existing['score']}")
+            skip_message = f"[SKIP] {model} - already has score: {existing['score']}"
+            log_message(skip_message)
         else:
             models_to_test.append(model)
     
     if not models_to_test:
-        print("[DONE] All models already tested")
+        log_message("[DONE] All models already tested")
         show_leaderboard(benchmark)
         return
     
-    print(f"\n[RUN-ALL] Testing {len(models_to_test)} models {'sequentially' if sequential else 'in parallel'}...")
+    log_message(f"\n[RUN-ALL] Testing {len(models_to_test)} models {'sequentially' if sequential else 'in parallel'}...")
     
     tested = 0
     errors = 0
@@ -239,13 +276,18 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
             
             if error:
                 tqdm.write(f"[ERROR] {model}: {error}")
+                # Log the error message
+                log_message(f"[ERROR] {model}: {error}")
+                
                 # Check if this is a rate limit error
                 if "Rate limit exceeded" in error:
                     move_model_to_limited(model)
                     tqdm.write(f"[LIMITED] Moved {model} to models_limited.txt")
+                    log_message(f"[LIMITED] Moved {model} to models_limited.txt")
                 else:
                     move_model_to_skip(model)
                     tqdm.write(f"[SKIP] Moved {model} to models_skip.txt")
+                    log_message(f"[SKIP] Moved {model} to models_skip.txt")
                 # Remove this failed/limited model from total count
                 pbar.total -= 1
                 errors += 1
@@ -259,7 +301,9 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
                         "elapsed_seconds": result.get("elapsed_seconds", 0)
                     }
                 )
-                tqdm.write(f"[DONE] {model}: Score {result['score']} ({result.get('elapsed_seconds', 0)}s)")
+                done_message = f"[DONE] {model}: Score {result['score']} ({result.get('elapsed_seconds', 0)}s)"
+                tqdm.write(done_message)
+                log_message(done_message)
                 tested += 1
             
             pbar.update(1)
@@ -267,7 +311,7 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
         pbar.close()
     else:
         # Parallel execution
-        print(f"[PARALLEL] Starting {len(models_to_test)} concurrent API calls...")
+        log_message(f"[PARALLEL] Starting {len(models_to_test)} concurrent API calls...")
         
         with ThreadPoolExecutor(max_workers=len(models_to_test)) as executor:
             futures = {
@@ -279,14 +323,20 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
                 model_name, result, error = future.result()
                 
                 if error:
-                    print(f"[ERROR] {model_name}: {error}")
+                    error_message = f"[ERROR] {model_name}: {error}"
+                    print(error_message)
+                    log_message(error_message)
                     # Check if this is a rate limit error
                     if "Rate limit exceeded" in error:
                         move_model_to_limited(model_name)
-                        print(f"[LIMITED] Moved {model_name} to models_limited.txt")
+                        limited_message = f"[LIMITED] Moved {model_name} to models_limited.txt"
+                        print(limited_message)
+                        log_message(limited_message)
                     else:
                         move_model_to_skip(model_name)
-                        print(f"[SKIP] Moved {model_name} to models_skip.txt")
+                        skip_message = f"[SKIP] Moved {model_name} to models_skip.txt"
+                        print(skip_message)
+                        log_message(skip_message)
                     errors += 1
                 else:
                     lb.add_result(
@@ -298,12 +348,14 @@ def run_all_models(benchmark: str, sequential: bool = False, retries: int = 1):
                             "elapsed_seconds": result.get("elapsed_seconds", 0)
                         }
                     )
-                    print(f"[DONE] {model_name}: Score {result['score']} ({result.get('elapsed_seconds', 0)}s)")
+                    done_message = f"[DONE] {model_name}: Score {result['score']} ({result.get('elapsed_seconds', 0)}s)"
+                    print(done_message)
+                    log_message(done_message)
                     tested += 1
     
-    print(f"\n{'='*60}")
-    print(f"[COMPLETE] Tested: {tested}, Errors: {errors}")
-    print('='*60)
+    log_message(f"\n{'='*60}")
+    log_message(f"[COMPLETE] Tested: {tested}, Errors: {errors}")
+    log_message('='*60)
     
     show_leaderboard(benchmark)
 
@@ -318,7 +370,7 @@ def rescore_all_outputs(benchmark: str):
     models_file = root_dir / "models.txt"
     
     if not output_dir.exists():
-        print("[ERROR] No output directory found")
+        log_message("[ERROR] No output directory found")
         return
         
     # Gather all potential models
@@ -340,7 +392,7 @@ def rescore_all_outputs(benchmark: str):
     # It's hard to map valid folder names back to model IDs if we don't have the map.
     # So we rely on the models we know.
     
-    print(f"[RESCORE] Re-evaluating {len(all_models)} potential models for {benchmark}...")
+    log_message(f"[RESCORE] Re-evaluating {len(all_models)} potential models for {benchmark}...")
     
     updated = 0
     errors = 0
@@ -402,7 +454,7 @@ def rescore_all_outputs(benchmark: str):
             except Exception as e:
                 errors += 1 
 
-    print(f"\n[COMPLETE] Updated: {updated}, Errors: {errors}")
+    log_message(f"\n[COMPLETE] Updated: {updated}, Errors: {errors}")
     show_leaderboard(benchmark)
 
 
@@ -414,7 +466,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
     
     path = Path(file_path)
     if not path.exists():
-        print(f"[ERROR] Ingest file not found: {file_path}")
+        log_message(f"[ERROR] Ingest file not found: {file_path}")
         return
         
 
@@ -423,7 +475,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
             content = f.read()
             
         if not content:
-            print("[ERROR] Empty ingest file")
+            log_message("[ERROR] Empty ingest file")
             return
             
         # Split content by "model:" (case-insensitive) to find blocks
@@ -432,10 +484,10 @@ def ingest_manual_output(file_path: str, benchmark: str):
         matches = list(model_header_pattern.finditer(content))
         
         if not matches:
-             print("[ERROR] No 'model: <name>' headers found.")
+             log_message("[ERROR] No 'model: <name>' headers found.")
              return
              
-        print(f"[INGEST] Found {len(matches)} model entries in {file_path}")
+        log_message(f"[INGEST] Found {len(matches)} model entries in {file_path}")
         
         for i, match in enumerate(matches):
             model_name = match.group(1).strip()
@@ -474,7 +526,7 @@ def ingest_manual_output(file_path: str, benchmark: str):
             with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(llm_output)
                 
-            print(f"  > Processing '{model_name}'...")
+            log_message(f"  > Processing '{model_name}'...")
                 
             # Grade
             if benchmark == "maze":
@@ -504,17 +556,21 @@ def ingest_manual_output(file_path: str, benchmark: str):
                 }
             )
             
-            print(f"    - Score: {result['score']} (Time: {elapsed_seconds}s)")
+            score_message = f"    - Score: {result['score']} (Time: {elapsed_seconds}s)"
+            log_message(score_message)
 
-        print("\n[SUCCESS] All entries processed and leaderboard updated.")
+        log_message("\n[SUCCESS] All entries processed and leaderboard updated.")
         show_leaderboard(benchmark)
         
     except Exception as e:
-        print(f"[ERROR] Failed to ingest: {e}")
+        log_message(f"[ERROR] Failed to ingest: {e}")
 
 
 def main():
     """Main CLI function."""
+    # Set up logging at the start
+    setup_logging()
+    
     parser = argparse.ArgumentParser(
         description="AI Benchmark - Strategic Spatial Reasoning Evaluation",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -564,9 +620,12 @@ Examples:
     
     try:
         if args.model:
+            log_message(f"[BENCHMARK] Running {args.benchmark} benchmark on {args.model}")
             print(f"[BENCHMARK] Running {args.benchmark} benchmark on {args.model}")
             result = run_benchmark_on_model(args.model, args.benchmark)
-            print(f"[RECEIVED] Response ({result['token_usage']['completion_tokens']} tokens) in {result['elapsed_seconds']}s")
+            received_message = f"[RECEIVED] Response ({result['token_usage']['completion_tokens']} tokens) in {result['elapsed_seconds']}s"
+            log_message(received_message)
+            print(received_message)
             
             if args.add_to_leaderboard:
                 from leaderboard import Leaderboard
@@ -580,12 +639,16 @@ Examples:
                         "elapsed_seconds": result.get("elapsed_seconds", 0)
                     }
                 )
-                print(f"[SAVED] Score added to leaderboard")
+                saved_message = "[SAVED] Score added to leaderboard"
+                log_message(saved_message)
+                print(saved_message)
         else:
+            log_message(f"[READING] LLM output from: {args.input}")
             print(f"[READING] LLM output from: {args.input}")
             llm_output = read_llm_output(args.input)
             
             if args.benchmark == "maze":
+                log_message("[RUNNING] Strategic Maze benchmark...")
                 print("[RUNNING] Strategic Maze benchmark...")
                 result = grade_strategic_maze(llm_output)
             else:
@@ -593,34 +656,48 @@ Examples:
         
         if args.json:
             output_result = {k: v for k, v in result.items() if k != "llm_response"}
-            print(json.dumps(output_result, indent=2))
+            json_output = json.dumps(output_result, indent=2)
+            print(json_output)
+            log_message(json_output)
         else:
             score_report = format_score_report(result)
             print(score_report)
+            log_message(score_report)
             
             if args.input:
                 timestamp = args.input.replace('.txt', '_score.json')
                 with open(timestamp, 'w', encoding='utf-8') as f:
                     json.dump(result, f, indent=2)
-                print(f"\n[SAVED] Detailed results saved to: {timestamp}")
+                saved_message = f"\n[SAVED] Detailed results saved to: {timestamp}"
+                print(saved_message)
+                log_message(saved_message)
         
         if args.add_to_leaderboard:
             print("")
+            log_message("")
             show_leaderboard(args.benchmark)
         
         sys.exit(0 if "error" not in result else 1)
             
     except FileNotFoundError as e:
-        print(f"[ERROR] {e}")
+        error_message = f"[ERROR] {e}"
+        log_message(error_message)
+        print(error_message)
         sys.exit(1)
     except ValueError as e:
-        print(f"[ERROR] {e}")
+        error_message = f"[ERROR] {e}"
+        log_message(error_message)
+        print(error_message)
         sys.exit(1)
     except RuntimeError as e:
-        print(f"[ERROR] {e}")
+        error_message = f"[ERROR] {e}"
+        log_message(error_message)
+        print(error_message)
         sys.exit(1)
     except Exception as e:
-        print(f"[ERROR] Unexpected error: {e}")
+        error_message = f"[ERROR] Unexpected error: {e}"
+        log_message(error_message)
+        print(error_message)
         sys.exit(1)
 
 
