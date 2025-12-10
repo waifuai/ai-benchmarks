@@ -30,3 +30,4 @@
 | 14 | google/gemma-3-12b-it:free | 44.6 |
 | 15 | google/gemma-3n-e2b-it:free | 45.1 |
 | 16 | google/gemma-3n-e4b-it:free | 20.3 |
+| 17 | mistralai/devstral-2512:free | 2.7 |
