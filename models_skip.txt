@@ -8,12 +8,6 @@ amazon/nova-2-lite-v1:free
 openai/gpt-oss-20b:free
 cognitivecomputations/dolphin-mistral-24b-venice-edition:free
 meituan/longcat-flash-chat:free
-qwen/qwen3-235b-a22b:free
 alibaba/tongyi-deepresearch-30b-a3b:free
-mistralai/mistral-7b-instruct:free
-nousresearch/hermes-3-llama-3.1-405b:free
 allenai/olmo-3-32b-think:free
-mistralai/mistral-small-3.1-24b-instruct:free
 moonshotai/kimi-k2:free
-meta-llama/llama-3.2-3b-instruct:free
-qwen/qwen3-4b:free

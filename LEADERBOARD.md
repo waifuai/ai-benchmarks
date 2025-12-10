@@ -9,7 +9,8 @@
 | 🥈 | gemini 3 pro preview | 1446.46 | 51.4 |
 | 🥉 | deepseek v3.2 | 1338.83 | 152.0 |
 | 4 | tngtech/deepseek-r1t-chimera:free | 1213.26 | 37.2 |
-| 5 | google/gemma-3-27b-it:free | 1065.95 | 11.0 |
+| 5 | qwen/qwen3-235b-a22b:free | 1155.69 | 32.4 |
+| 6 | google/gemma-3-27b-it:free | 1065.95 | 11.0 |
 
 ### ❌ Failed Runs (Score: -100)
 | Rank | Model | Time (s) |
@@ -31,3 +32,4 @@
 | 15 | google/gemma-3n-e2b-it:free | 45.1 |
 | 16 | google/gemma-3n-e4b-it:free | 20.3 |
 | 17 | mistralai/devstral-2512:free | 2.7 |
+| 18 | mistralai/mistral-7b-instruct:free | 6.8 |
