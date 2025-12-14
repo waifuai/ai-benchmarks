@@ -1,8 +1,3 @@
 qwen/qwen3-235b-a22b:free
 mistralai/mistral-7b-instruct:free
 nousresearch/hermes-3-llama-3.1-405b:free
-allenai/olmo-3-32b-think:free
-mistralai/mistral-small-3.1-24b-instruct:free
-moonshotai/kimi-k2:free
-meta-llama/llama-3.2-3b-instruct:free
-qwen/qwen3-4b:free

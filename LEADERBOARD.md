@@ -33,3 +33,4 @@
 | 16 | google/gemma-3n-e4b-it:free | 20.3 |
 | 17 | mistralai/devstral-2512:free | 2.7 |
 | 18 | mistralai/mistral-7b-instruct:free | 6.8 |
+| 19 | nousresearch/hermes-3-llama-3.1-405b:free | 35.1 |
