@@ -1,3 +1,0 @@
-qwen/qwen3-235b-a22b:free
-mistralai/mistral-7b-instruct:free
-nousresearch/hermes-3-llama-3.1-405b:free
