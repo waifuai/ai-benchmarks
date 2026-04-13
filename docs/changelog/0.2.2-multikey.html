@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v0.2.2 — Multikey</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #e6edf3; background: #0d1117; }
+  pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+  code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  th { background: #161b22; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+  blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #8b949e; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; Back to index</a>
+<h1>v0.2.2 — Multikey</h1>
+<h2>[0.2.2] multikey</h2>
+<h3>Added</h3>
+<ul>
+<li><strong>Multi-Key Maze Logic</strong>: Support for alphabet-based keys (<code>a</code>-<code>z</code>) and doors (<code>A</code>-<code>Z</code>).</li>
+<li>New scoring component: <strong>Complexity (Chain Length)</strong> based on sequential key/door pairs solved.</li>
+<li>New scoring component: <strong>Path Efficiency</strong> (Length / Grid Size).</li>
+<li>Updated <code>prompt.md</code> to instruct LLMs on the new multi-key rules.</li>
+<li><strong>Rescore Feature</strong>: Added <code>--rescore</code> flag to <code>run_benchmark.py</code> to re-evaluate all existing outputs in <code>output/</code> directory without re-running models.</li>
+<li><code>test_multikey.py</code>: Test suite for validating the new multi-key maze logic and scoring.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>API Integration</strong>: Improved response parsing to robustly handle usage statistics (prompt/completion/total tokens).</li>
+<li><strong>Maze Evaluator</strong>: </li>
+<li>Overhauled scoring formula to prioritize logical chain completion.</li>
+<li>Adjusted <strong>Danger</strong> score to use diminishing returns (sqrt) for adjacent traps.</li>
+<li>Fixed <code>ZeroDivisionError</code> in complexity ratio calculation.</li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategic Maze Elements Design</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #e6edf3; background: #0d1117; }
+  pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+  code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  th { background: #161b22; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+  blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #8b949e; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; Back to index</a>
+<h1>Strategic Maze Elements Design</h1>
+<h2>Current Problems</h2>
+<ul>
+<li>Excessive repetitive traps that look silly and unstrategic</li>
+<li>Limited tactical depth - only basic key/door mechanics</li>
+<li>Scoring encourages trap-spamming over intelligent design</li>
+<li>No dynamic or interactive elements</li>
+<li>Aesthetically poor repetitive patterns</li>
+</ul>
+<h2>New Strategic Elements</h2>
+<h3>1. Teleporters</h3>
+<ul>
+<li><strong>Symbol</strong>: 'O' (origin) and 'Q' (destination)</li>
+<li><strong>Mechanics</strong>: Single-use teleporters that transport player to matching destination</li>
+<li><strong>Strategic Use</strong>: Quick traversal, bypassing obstacles, creating multi-path strategies</li>
+<li><strong>Scoring</strong>: Bonus for creative teleportation routes</li>
+</ul>
+<h3>2. Switches and Gates</h3>
+<ul>
+<li><strong>Switch Symbol</strong>: 's' (toggle switch)</li>
+<li><strong>Gate Symbol</strong>: 'S' (initially closed, opens when switch activated)</li>
+<li><strong>Mechanics</strong>: Stepping on switch toggles all gates of that type</li>
+<li><strong>Strategic Use</strong>: Complex route planning, temporary access, timing puzzles</li>
+<li><strong>Scoring</strong>: Complexity bonus for multi-switch gate puzzles</li>
+</ul>
+<h3>3. Movable Blocks</h3>
+<ul>
+<li><strong>Symbol</strong>: 'B' (movable block)</li>
+<li><strong>Mechanics</strong>: Can be pushed into adjacent empty spaces to create bridges or barriers</li>
+<li><strong>Strategic Use</strong>: Bridge gaps, block paths, create temporary platforms</li>
+<li><strong>Scoring</strong>: Innovation bonus for creative block usage</li>
+</ul>
+<h3>4. Multiple Exit Conditions</h3>
+<ul>
+<li><strong>Primary Exit</strong>: 'E' (standard end point)</li>
+<li><strong>Bonus Exits</strong>: 'F', 'G', 'H' (require specific collections: flowers, gems, etc.)</li>
+<li><strong>Mechanics</strong>: Reaching different exits provides different scoring bonuses</li>
+<li><strong>Strategic Use</strong>: Multiple path strategies, collection puzzles</li>
+<li><strong>Scoring</strong>: Bonus for completing bonus objectives</li>
+</ul>
+<h3>5. Conditional Paths</h3>
+<ul>
+<li><strong>Special Doors</strong>: 'X', 'Y', 'Z' (require multiple keys or specific conditions)</li>
+<li><strong>Mechanics</strong>: Complex unlock conditions (e.g., need 2 of 3 keys, or key + switch activation)</li>
+<li><strong>Strategic Use</strong>: Advanced planning, resource management, conditional logic</li>
+<li><strong>Scoring</strong>: High complexity bonuses for multi-condition puzzles</li>
+</ul>
+<h2>Enhanced Scoring System</h2>
+<h3>New Scoring Components</h3>
+<ol>
+<li><strong>Strategic Innovation</strong> (0-100 pts): Creative use of new elements</li>
+<li><strong>Route Complexity</strong> (0-150 pts): Multiple viable solution paths</li>
+<li><strong>Resource Management</strong> (0-100 pts): Efficient use of keys, switches, blocks</li>
+<li><strong>Bonus Objectives</strong> (0-75 pts): Completing optional challenges</li>
+<li><strong>Puzzle Sophistication</strong> (0-125 pts): Advanced conditional logic</li>
+</ol>
+<h3>Reduced Traps Importance</h3>
+<ul>
+<li>Lower maximum trap scoring (max 30 pts instead of unlimited)</li>
+<li>Remove trap density penalties (focus on placement quality)</li>
+<li>Score traps based on strategic placement, not quantity</li>
+</ul>
+<h2>Implementation Phases</h2>
+<ol>
+<li>Update evaluator to parse new elements</li>
+<li>Implement pathfinding for new mechanics</li>
+<li>Create enhanced scoring algorithm</li>
+<li>Update prompt to guide strategic maze creation</li>
+<li>Test with complex maze examples</li>
+</ol>
+</body>
+</html>

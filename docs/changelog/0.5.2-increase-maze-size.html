@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v0.5.2 — Increase Maze Size</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #e6edf3; background: #0d1117; }
+  pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+  code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  th { background: #161b22; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+  blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #8b949e; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; Back to index</a>
+<h1>v0.5.2 — Increase Maze Size</h1>
+<h2>[0.5.2] increase maze size</h2>
+<h3>Added</h3>
+<ul>
+<li><strong>Enhanced Maze Size Support</strong>: Increased maximum maze size from 32×32 to 64×64</li>
+<li>Updated validation constants in strategic_evaluator.py</li>
+<li>Modified prompt.md to reflect new size constraints</li>
+<li>Updated README.md documentation</li>
+<li><strong>Multiple Run Support</strong>: Leaderboard now supports multiple runs per model</li>
+<li>Migrated from single-result dict format to list-based storage</li>
+<li>Enhanced get_rankings() to include all runs for each model</li>
+<li>Added migration logic for backward compatibility</li>
+<li>Updated ingest_manual_output to generate timestamped output files</li>
+<li><strong>Improved Rescoring</strong>: Enhanced --rescore functionality</li>
+<li>Searches for multiple benchmark output files per model</li>
+<li>Preserves existing metadata (timing, token usage) during rescore</li>
+<li>Better error handling and file discovery</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>Leaderboard Storage</strong>: Migrated from single-result to multiple-run format</li>
+<li>Supports historical comparison and progress tracking</li>
+<li>Maintains backward compatibility with existing data</li>
+<li><strong>Input Processing</strong>: Enhanced pattern matching and file handling</li>
+<li>Updated regex patterns for better model detection</li>
+<li>Added timestamp support for multiple manual runs</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li><strong>Regex Pattern Issues</strong>: Improved model header detection in manual output ingestion</li>
+<li><strong>File Overwriting</strong>: Prevented multiple manual runs from overwriting previous results</li>
+<li><strong>Metadata Preservation</strong>: Fixed token usage and timing data loss during rescoring</li>
+</ul>
+<h3>Improved</h3>
+<ul>
+<li><strong>Scalability</strong>: Support for larger, more complex mazes (up to 64×64)</li>
+<li><strong>Performance</strong>: Better file handling for multiple benchmark outputs</li>
+<li><strong>User Experience</strong>: Enhanced error messages and file management</li>
+</ul>
+</body>
+</html>

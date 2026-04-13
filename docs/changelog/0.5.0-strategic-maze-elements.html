@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v0.5.0 — Strategic Maze Elements</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #e6edf3; background: #0d1117; }
+  pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+  code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  th { background: #161b22; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+  blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #8b949e; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; Back to index</a>
+<h1>v0.5.0 — Strategic Maze Elements</h1>
+<h2>[0.5.0] strategic maze elements</h2>
+<h3>Added</h3>
+<ul>
+<li><strong>Strategic Maze Elements</strong>: Complete overhaul adding 5 new strategic maze mechanics</li>
+<li><strong>Teleporters</strong> ('O'/'Q'): Single-use quick travel for strategic routing (+15 pts each, max 60)</li>
+<li><strong>Switches</strong> ('s'): Toggle gates ('S') for dynamic path changes (+20 pts each, max 80)</li>
+<li><strong>Movable Blocks</strong> ('B'): Push to create bridges/barriers (innovation bonus)</li>
+<li><strong>Bonus Exits</strong> ('F','G','H'): Optional objectives (+75 points each)</li>
+<li><strong>Conditional Doors</strong> ('X','Y','Z'): Complex unlock requirements (+30 pts each)</li>
+<li><strong>Enhanced Scoring System</strong>: Expanded from 5 to 8 scoring components</li>
+<li><strong>Strategic Innovation</strong>: Rewards creative use of strategic elements (0-100 pts)</li>
+<li><strong>Route Complexity</strong>: Multiple solution paths analysis (0-150 pts)</li>
+<li><strong>Bonus Objectives</strong>: Optional challenge completion (0-75 pts)</li>
+<li><strong>Reduced trap importance</strong>: Max 30 points vs unlimited before</li>
+<li><strong>Strategic Pathfinder</strong>: Advanced pathfinding algorithm handling stateful elements</li>
+<li>Multi-dimensional state tracking (keys, switches, teleport usage)</li>
+<li>Innovation analysis detecting creative strategic element usage</li>
+<li>Timeout protection for complex maze solving</li>
+<li><strong>Enhanced Documentation</strong>: Updated prompt.md to guide models toward strategic thinking</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>Scoring Focus</strong>: Shifted from trap-spamming to strategic puzzle-solving</li>
+<li>Typical scores increased from 200-400 to 800+ for quality strategic mazes</li>
+<li>Quality over quantity approach for all maze elements</li>
+<li><strong>Maze Evaluation</strong>: Complete rewrite of <code>strategic_evaluator.py</code></li>
+<li>StrategicMaze class for intelligent element analysis</li>
+<li>Enhanced pathfinding with stateful movement logic</li>
+<li>Innovation detection and creative usage scoring</li>
+<li><strong>CLI Output</strong>: Updated to reflect new scoring components and strategic analysis</li>
+<li>Strategic elements breakdown in results</li>
+<li>Innovation details and unique strategies</li>
+<li>Enhanced maze analysis with complexity metrics</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li><strong>Route Complexity Analysis</strong>: Resolved unpacking error in strategic element counting</li>
+<li><strong>Pathfinding State Management</strong>: Fixed teleporter and switch state tracking</li>
+<li><strong>Innovation Scoring</strong>: Corrected strategic element usage detection</li>
+<li><strong>Performance Issues</strong>: Optimized complex maze solving with proper timeout handling</li>
+</ul>
+<h3>Improved</h3>
+<ul>
+<li><strong>AI Model Challenge</strong>: Higher intelligence ceiling for advanced models</li>
+<li><strong>Maze Variety</strong>: Eliminates repetitive trap-filling strategies</li>
+<li><strong>Strategic Depth</strong>: Multiple solution paths rewarded over single approaches</li>
+<li><strong>Benchmark Quality</strong>: True spatial reasoning assessment vs basic maze completion</li>
+</ul>
+<h3>Tested</h3>
+<ul>
+<li><strong>Performance Validation</strong>: Sample strategic maze scored 871.69 points</li>
+<li>Strategic Innovation: 70 points (teleporter + switch usage)</li>
+<li>Route Complexity: 76 points (strategic element integration)</li>
+<li>Quality Focus: Strategic placement prioritized over trap quantity</li>
+<li><strong>System Reliability</strong>: Robust handling of complex strategic element interactions</li>
+<li><strong>Backward Compatibility</strong>: Legacy maze evaluation maintained through grade_maze() wrapper</li>
+</ul>
+</body>
+</html>

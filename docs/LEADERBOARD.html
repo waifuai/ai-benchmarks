@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏆 Benchmark Leaderboard</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #e6edf3; background: #0d1117; }
+  pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+  code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  th { background: #161b22; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+  blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #8b949e; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; Back to index</a>
+<h1>🏆 Benchmark Leaderboard</h1>
+<h2>Maze Benchmark</h2>
+<h3>🏆 Successful Runs</h3>
+<table>
+<thead>
+<tr>
+<th>Rank</th>
+<th>Model</th>
+<th>Score</th>
+<th>Time (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🥇</td>
+<td>meta-llama/llama-3.3-70b-instruct:free</td>
+<td>1640.68</td>
+<td>36.3</td>
+</tr>
+<tr>
+<td>🥈</td>
+<td>gemini 3 pro preview</td>
+<td>1446.46</td>
+<td>51.4</td>
+</tr>
+<tr>
+<td>🥉</td>
+<td>deepseek v3.2</td>
+<td>1338.83</td>
+<td>152.0</td>
+</tr>
+<tr>
+<td>4</td>
+<td>tngtech/deepseek-r1t-chimera:free</td>
+<td>1213.26</td>
+<td>37.2</td>
+</tr>
+<tr>
+<td>5</td>
+<td>qwen/qwen3-235b-a22b:free</td>
+<td>1155.69</td>
+<td>32.4</td>
+</tr>
+<tr>
+<td>6</td>
+<td>google/gemma-3-27b-it:free</td>
+<td>1065.95</td>
+<td>11.0</td>
+</tr>
+</tbody>
+</table>
+<h3>❌ Failed Runs (Score: -100)</h3>
+<table>
+<thead>
+<tr>
+<th>Rank</th>
+<th>Model</th>
+<th>Time (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>tngtech/deepseek-r1t2-chimera:free</td>
+<td>57.0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>kwaipilot/kat-coder-pro:free</td>
+<td>21.4</td>
+</tr>
+<tr>
+<td>3</td>
+<td>z-ai/glm-4.5-air:free</td>
+<td>42.3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>nvidia/nemotron-nano-12b-v2-vl:free</td>
+<td>164.8</td>
+</tr>
+<tr>
+<td>5</td>
+<td>tngtech/tng-r1t-chimera:free</td>
+<td>52.5</td>
+</tr>
+<tr>
+<td>6</td>
+<td>qwen/qwen3-coder:free</td>
+<td>14.9</td>
+</tr>
+<tr>
+<td>7</td>
+<td>amazon/nova-2-lite-v1:free</td>
+<td>13.6</td>
+</tr>
+<tr>
+<td>8</td>
+<td>openai/gpt-oss-20b:free</td>
+<td>9.5</td>
+</tr>
+<tr>
+<td>9</td>
+<td>cognitivecomputations/dolphin-mistral-24b-venice-edition:free</td>
+<td>28.7</td>
+</tr>
+<tr>
+<td>10</td>
+<td>google/gemini-2.0-flash-exp:free</td>
+<td>3.5</td>
+</tr>
+<tr>
+<td>11</td>
+<td>nvidia/nemotron-nano-9b-v2:free</td>
+<td>198.3</td>
+</tr>
+<tr>
+<td>12</td>
+<td>arcee-ai/trinity-mini:free</td>
+<td>12.2</td>
+</tr>
+<tr>
+<td>13</td>
+<td>google/gemma-3-4b-it:free</td>
+<td>20.4</td>
+</tr>
+<tr>
+<td>14</td>
+<td>google/gemma-3-12b-it:free</td>
+<td>44.6</td>
+</tr>
+<tr>
+<td>15</td>
+<td>google/gemma-3n-e2b-it:free</td>
+<td>45.1</td>
+</tr>
+<tr>
+<td>16</td>
+<td>google/gemma-3n-e4b-it:free</td>
+<td>20.3</td>
+</tr>
+<tr>
+<td>17</td>
+<td>mistralai/devstral-2512:free</td>
+<td>2.7</td>
+</tr>
+<tr>
+<td>18</td>
+<td>mistralai/mistral-7b-instruct:free</td>
+<td>6.8</td>
+</tr>
+<tr>
+<td>19</td>
+<td>nousresearch/hermes-3-llama-3.1-405b:free</td>
+<td>35.1</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

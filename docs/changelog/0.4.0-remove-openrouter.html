@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v0.4.0 — Remove Openrouter</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #e6edf3; background: #0d1117; }
+  pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+  code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  th { background: #161b22; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+  blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #8b949e; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; Back to index</a>
+<h1>v0.4.0 — Remove Openrouter</h1>
+<h2>[0.4.0] remove openrouter</h2>
+<h3>Removed</h3>
+<ul>
+<li><strong>OpenRouter Integration</strong>: Removed all OpenRouter API integration and live model benchmarking</li>
+<li><strong>Live API Calls</strong>: Eliminated <code>--model</code> and <code>--run-all</code> flags that required API access</li>
+<li><strong>External Dependencies</strong>: Removed dependency on OpenRouter API for benchmarking</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>CLI Interface</strong>: Simplified to use only file-based input with <code>--input</code> flag</li>
+<li><strong>Documentation</strong>: Updated README and examples to reflect file-based workflow</li>
+<li><strong>Focus</strong>: Repository now exclusively processes pre-generated LLM output files</li>
+</ul>
+<h3>Added</h3>
+<ul>
+<li><strong>Manual Ingestion</strong>: Enhanced <code>--ingest</code> feature for processing multiple model outputs from single file</li>
+<li><strong>File Processing</strong>: Streamlined workflow for benchmark evaluation from saved outputs</li>
+</ul>
+</body>
+</html>

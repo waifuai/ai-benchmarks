@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v0.6.0 — Fix Prompt</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #e6edf3; background: #0d1117; }
+  pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+  code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  th { background: #161b22; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+  blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #8b949e; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; Back to index</a>
+<h1>v0.6.0 — Fix Prompt</h1>
+<h2>[0.6.0] fix prompt</h2>
+<h3>Added</h3>
+<ul>
+<li><strong>Strategic Maze Evaluator v2.0</strong>: Complete rewrite of the maze evaluator system</li>
+<li>Advanced stateful pathfinding algorithm with multi-dimensional state tracking</li>
+<li>Strategic element integration: teleporters (O/Q), switches (s), movable blocks (B)</li>
+<li>Conditional door logic: X (2+ keys), Y (switch), Z (switch + key)</li>
+<li>Enhanced innovation scoring for creative strategic element usage</li>
+<li>Timeout protection for complex maze solving (5-second limit)</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>Scoring System Overhaul</strong>: Replaced gradient scoring with strategic innovation approach</li>
+<li>Strategic Innovation: +15 teleporter, +20 switch, +25 conditional door points</li>
+<li>Route Complexity: Key collection chains and switch activation bonuses</li>
+<li>Bonus Objectives: +75 points per optional exit (F/G/H)</li>
+<li>Strategic Danger: Capped at 30 points for quality over quantity</li>
+<li><strong>Maze Size Support</strong>: Increased maximum maze dimensions from 32×32 to 64×64</li>
+<li>Updated validation constants in strategic_evaluator.py</li>
+<li>Enhanced scalability for larger, more complex strategic mazes</li>
+<li><strong>Prompt Refinement</strong>: Streamlined and clarified maze generation instructions</li>
+<li>Simplified strategic elements description and logic</li>
+<li>Enhanced guidance for conditional door requirements</li>
+<li>Clearer constraint specifications for maze solvability</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li><strong>Pathfinding State Management</strong>: Resolved teleporter and switch state tracking issues</li>
+<li><strong>Maze Solvability</strong>: Enhanced validation to ensure all strategic elements work correctly</li>
+<li><strong>Character Validation</strong>: Improved handling of strategic maze characters and edge cases</li>
+<li><strong>Performance Issues</strong>: Optimized complex maze solving with proper timeout handling</li>
+</ul>
+<h3>Improved</h3>
+<ul>
+<li><strong>AI Model Challenge</strong>: Higher intelligence ceiling with strategic puzzle complexity</li>
+<li><strong>Benchmark Quality</strong>: True strategic reasoning assessment vs basic maze completion</li>
+<li><strong>Evaluation Accuracy</strong>: More precise scoring of creative strategic element usage</li>
+<li><strong>System Reliability</strong>: Robust handling of complex strategic element interactions</li>
+</ul>
+<h3>Updated</h3>
+<ul>
+<li><strong>Leaderboard Results</strong>: Refreshed with new evaluator scoring</li>
+<li>gemini 3 pro preview: 1446.46 points (51.4s)</li>
+<li>deepseek v3.2: 1338.83 points (152.0s)</li>
+<li><strong>Strategic Elements</strong>: Enhanced teleporter, switch, and conditional door mechanics</li>
+</ul>
+</body>
+</html>

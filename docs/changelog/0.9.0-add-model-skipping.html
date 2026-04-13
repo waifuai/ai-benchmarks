@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v0.9.0 — Add Model Skipping</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #e6edf3; background: #0d1117; }
+  pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+  code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  th { background: #161b22; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+  blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #8b949e; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; Back to index</a>
+<h1>v0.9.0 — Add Model Skipping</h1>
+<h2>[0.9.0] add model skipping</h2>
+<h3>Added</h3>
+<ul>
+<li><strong>Model Skip System</strong>: New <code>models_skip.txt</code> file for tracking failed or problematic models</li>
+<li>Automatic movement of failed models from <code>models.txt</code> to <code>models_skip.txt</code></li>
+<li>Prevents re-testing of consistently failing models</li>
+<li>Improved batch execution efficiency by avoiding known problematic models</li>
+<li><strong>Automatic Model Management</strong>: Enhanced benchmark runner with smart model handling</li>
+<li><code>move_model_to_skip()</code> function for automated model organization</li>
+<li>Both parallel and sequential execution modes now automatically skip failed models</li>
+<li>Clear feedback when models are moved to skip list during execution</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>Model List Optimization</strong>: Streamlined <code>models.txt</code> from 29 to 10 active models</li>
+<li>Removed 19 underperforming or consistently failing models</li>
+<li>Focused on higher-quality models for more reliable benchmarking</li>
+<li>Moved removed models to new <code>models_skip.txt</code> for reference</li>
+<li><strong>Leaderboard Expansion</strong>: Added 7 new model results to leaderboard</li>
+<li>New entries include google/gemini-2.0-flash-exp, nvidia/nemotron-nano-9b-v2, and others</li>
+<li>Updated rankings reflect latest benchmark performance</li>
+<li><strong>String Formatting</strong>: Fixed escape character issues throughout <code>run_benchmark.py</code></li>
+<li>Corrected <code>\\n</code> to <code>\n</code> for proper newline handling</li>
+<li>Improved regex patterns for better model detection and time extraction</li>
+<li>Enhanced string formatting consistency across the codebase</li>
+</ul>
+<h3>Improved</h3>
+<ul>
+<li><strong>Execution Efficiency</strong>: Faster batch processing by avoiding known failing models</li>
+<li><strong>Error Handling</strong>: Better feedback when models are automatically moved to skip list</li>
+<li><strong>Code Quality</strong>: Cleaner string handling and more robust regex patterns</li>
+<li><strong>Leaderboard Accuracy</strong>: More reliable rankings with focus on consistently performing models</li>
+</ul>
+</body>
+</html>

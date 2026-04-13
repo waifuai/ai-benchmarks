@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v0.8.0 — No Retries</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #e6edf3; background: #0d1117; }
+  pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+  code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  th { background: #161b22; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+  blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #8b949e; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; Back to index</a>
+<h1>v0.8.0 — No Retries</h1>
+<h2>[0.8.0] no retries</h2>
+<h3>Changed</h3>
+<ul>
+<li><strong>Error Handling Strategy</strong>: Completely removed retry mechanisms in favor of fail-fast approach</li>
+<li>Removed exponential backoff and retry logic from OpenRouter client</li>
+<li>Simplified API error handling to immediately move to next model on failure</li>
+<li>Changed default retry count from 1 to 0 for all benchmark operations</li>
+<li>Updated <code>run_benchmark_on_model()</code> and <code>benchmark_single_model()</code> to not retry on empty responses</li>
+<li><strong>Sequential Execution</strong>: Enhanced progress tracking and error handling in sequential mode</li>
+<li>Improved progress bar accuracy by adjusting total count for failed models</li>
+<li>Better error reporting with clear model-by-model failure messages</li>
+<li>Streamlined sequential execution flow without retry overhead</li>
+</ul>
+<h3>Updated</h3>
+<ul>
+<li><strong>Leaderboard Results</strong>: Latest benchmark rankings with new top performer</li>
+<li>New leader: meta-llama/llama-3.3-70b-instruct:free (1640.68 points, 36.3s)</li>
+<li>Added new failed model: cognitivecomputations/dolphin-mistral-24b-venice-edition:free</li>
+<li>Updated rankings reflect improved performance testing methodology</li>
+</ul>
+<h3>Improved</h3>
+<ul>
+<li><strong>Performance</strong>: Eliminated retry delays for faster batch processing</li>
+<li><strong>Reliability</strong>: Clear failure detection without hanging on problematic models</li>
+<li><strong>User Experience</strong>: More predictable execution times and clearer error feedback</li>
+</ul>
+</body>
+</html>

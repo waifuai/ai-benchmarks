@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Benchmark Repository</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --card-bg: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent2: #7ee787;
+  --accent3: #d2a8ff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 2rem; }
+.container { max-width: 1100px; margin: 0 auto; }
+header { text-align: center; margin-bottom: 3rem; padding: 2rem 0; border-bottom: 1px solid var(--border); }
+header h1 { font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem; }
+header p { color: var(--text-muted); font-size: 1.1rem; }
+section { margin-bottom: 2.5rem; }
+h2 { font-size: 1.4rem; margin-bottom: 0.75rem; padding-bottom: 0.4rem; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 0.5rem; }
+.count { font-size: 0.85rem; color: var(--text-muted); font-weight: 400; }
+.section-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+.link-list { display: flex; flex-direction: column; gap: 0.25rem; }
+.link-list a { color: var(--accent); text-decoration: none; padding: 0.4rem 0.75rem; border-radius: 6px; transition: background 0.15s; font-size: 0.95rem; }
+.link-list a:hover { background: var(--card-bg); text-decoration: underline; }
+footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; padding-top: 2rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+pre code { background: none; padding: 0; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+th { background: #161b22; }
+h1, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>AI Benchmark Repository</h1>
+<p>LLM spatial reasoning evaluation through gradient scoring systems</p>
+</header>
+
+<section>
+<h2>Documentation <span class="count">(3)</span></h2>
+<p class="section-desc">Core project documentation and design specs</p>
+<div class="link-list">
+    <a href="ENHANCEMENT_SUMMARY.html">Strategic Maze Benchmark Enhancement</a>
+    <a href="LEADERBOARD.html">🏆 Benchmark Leaderboard</a>
+    <a href="strategic_maze_design.html">Strategic Maze Elements Design</a>
+</div>
+</section>
+
+<section>
+<h2>Benchmarks <span class="count">(1)</span></h2>
+<p class="section-desc">Benchmark prompts and evaluation specifications</p>
+<div class="link-list">
+    <a href="benchmarks/maze/prompt.html">Maze Benchmark Prompt — Anti-Cheese</a>
+</div>
+</section>
+
+<section>
+<h2>Changelog <span class="count">(19)</span></h2>
+<p class="section-desc">Version history from v0.1.0 through v0.9.3</p>
+<div class="link-list">
+    <a href="changelog/0.1.0-add-maze-benchmark.html">v0.1.0 — Add Maze Benchmark</a>
+    <a href="changelog/0.1.1-limit-maze-size.html">v0.1.1 — Limit Maze Size</a>
+    <a href="changelog/0.2.0-add-leaderboard.html">v0.2.0 — Add Leaderboard</a>
+    <a href="changelog/0.2.1-add-models.html">v0.2.1 — Add Models</a>
+    <a href="changelog/0.2.2-multikey.html">v0.2.2 — Multikey</a>
+    <a href="changelog/0.2.3-add-retry-for-blank-output.html">v0.2.3 — Add Retry For Blank Output</a>
+    <a href="changelog/0.3.0-enhanced-scoring-system.html">v0.3.0 — Enhanced Scoring System</a>
+    <a href="changelog/0.4.0-remove-openrouter.html">v0.4.0 — Remove Openrouter</a>
+    <a href="changelog/0.4.1-default-input-file.html">v0.4.1 — Default Input File</a>
+    <a href="changelog/0.5.0-strategic-maze-elements.html">v0.5.0 — Strategic Maze Elements</a>
+    <a href="changelog/0.5.1-simplify-leaderboard.html">v0.5.1 — Simplify Leaderboard</a>
+    <a href="changelog/0.5.2-increase-maze-size.html">v0.5.2 — Increase Maze Size</a>
+    <a href="changelog/0.6.0-fix-prompt.html">v0.6.0 — Fix Prompt</a>
+    <a href="changelog/0.7.0-add-openrouter.html">v0.7.0 — Add Openrouter</a>
+    <a href="changelog/0.8.0-no-retries.html">v0.8.0 — No Retries</a>
+    <a href="changelog/0.9.0-add-model-skipping.html">v0.9.0 — Add Model Skipping</a>
+    <a href="changelog/0.9.1-separate-rate-limited-models.html">v0.9.1 — Separate Rate Limited Models</a>
+    <a href="changelog/0.9.2-add-logs.html">v0.9.2 — Add Logs</a>
+    <a href="changelog/0.9.3-modular-refactoring.html">v0.9.3 — Modular Refactoring</a>
+</div>
+</section>
+
+<section>
+<h2>Project Description</h2>
+<h1>AI Benchmark Repository</h1>
+<p>A specialized testing suite for evaluating Large Language Models (LLMs) on spatial reasoning tasks through gradient scoring systems.</p>
+<h2>🚀 Quick Start</h2>
+<pre><code class="language-bash"># Install dependencies
+pip install -r requirements.txt
+
+# Run benchmark on LLM output file
+python run_benchmark.py --input path_to_llm_output.txt
+
+# Run benchmark against an OpenRouter model
+python run_benchmark.py --model google/gemini-2.0-flash-exp:free --benchmark maze
+
+# Run and save to leaderboard
+python run_benchmark.py --input llm_output.txt --add-to-leaderboard
+
+# View the leaderboard
+python run_benchmark.py --leaderboard
+
+# Run all models from models.txt
+python run_benchmark.py --run-all
+</code></pre>
+<h3>OpenRouter Setup</h3>
+<p>Set your API key as an environment variable:</p>
+<pre><code class="language-bash"># Windows
+set OPENROUTER_API_KEY=your_key_here
+
+# Linux/Mac
+export OPENROUTER_API_KEY=your_key_here
+</code></pre>
+<h2>🏆 Leaderboard System</h2>
+<p>The benchmark includes a leaderboard to track and compare model performance:</p>
+<ul>
+<li><strong>Add results</strong>: Use <code>--add-to-leaderboard</code> when running benchmarks</li>
+<li><strong>View rankings</strong>: Use <code>--leaderboard</code> to display current standings</li>
+<li><strong>Persistent storage</strong>: Results saved to <code>leaderboard.json</code></li>
+</ul>
+<h2>🧪 Current Benchmarks</h2>
+<h3>The "Maze Gauntlet" - LLM Spatial Reasoning Challenge</h3>
+<p>Unlike traditional maze benchmarks that use binary pass/fail scoring, the Maze Gauntlet implements a <strong>Gradient Scoring</strong> system that evaluates how well LLMs can generate complex, solvable mazes with specific state-dependency rules.</p>
+<h4>Philosophy</h4>
+<p>Most maze benchmarks are binary (Pass/Fail). This is a <strong>Gradient Benchmark</strong> that rewards:
+- <strong>Ambition</strong>: Grid size and complexity
+- <strong>Logic</strong>: Proper S → K → D → E path progression<br />
+- <strong>Danger</strong>: Strategic trap placement adjacent to valid paths</p>
+<h2>📊 Scoring System</h2>
+<h3>The Maze Gauntlet Scoring Components:</h3>
+<ol>
+<li><strong>Ambition</strong> (Grid Size)</li>
+<li>Points: 100 × log₂(Rows × Cols)</li>
+<li>
+<p>Rewards larger mazes but with logarithmic scaling to prevent exponential runaway</p>
+</li>
+<li>
+<p><strong>Progress</strong> (Path Logic)</p>
+</li>
+<li>2 points per reachable tile</li>
+<li>+50 bonus for Key ('K') </li>
+<li>+50 bonus for Door ('D')</li>
+<li>
+<p>+50 bonus for End ('E')</p>
+</li>
+<li>
+<p><strong>Path Efficiency</strong> (New)</p>
+</li>
+<li>Points: (Shortest Valid Path Length / Grid Size) × 100</li>
+<li>
+<p>Rewards mazes that use the available space efficiently for the solution</p>
+</li>
+<li>
+<p><strong>Danger</strong> (Strategic Placement)</p>
+</li>
+<li>Points: 20 × sqrt(Adjacent Traps)</li>
+<li>Diminishing returns preventing "trap spamming"</li>
+<li>
+<p>Only traps near the valid solution path count</p>
+</li>
+<li>
+<p><strong>Logic Penalties</strong></p>
+</li>
+<li>If Traps &gt; Walls: -50% score penalty</li>
+<li>
+<p>Path must follow S → K → D → E sequence</p>
+</li>
+<li>
+<p><strong>Proximity Bonuses</strong></p>
+</li>
+<li>Partial credit for <strong>unreachable</strong> objectives based on distance to reachable areas</li>
+<li>
+<p>No double-counting for reached objectives</p>
+</li>
+<li>
+<p><strong>Constraints</strong></p>
+</li>
+<li>Maximum maze size: <strong>64×64</strong> (mazes exceeding this limit score 0)</li>
+</ol>
+<h2>🔧 Architecture</h2>
+<pre><code>ai-benchmark/
+├── README.md               # This file
+├── CHANGELOG.md            # Version history
+├── requirements.txt        # Dependencies
+├── models.txt              # Available models for testing
+├── run_benchmark.py        # CLI Entry point
+├── openrouter.py           # OpenRouter API client
+├── leaderboard.py          # Leaderboard management
+├── leaderboard.json        # Stored benchmark results
+└── benchmarks/
+    ├── __init__.py
+    └── maze/
+        ├── __init__.py
+        ├── prompt.md       # The &quot;Anti-Cheese&quot; Prompt
+        └── evaluator.py    # Gradient Scoring Logic
+</code></pre>
+<h2>🎯 Adding New Benchmarks</h2>
+<p>This repository is designed to be modular. To add new benchmarks:</p>
+<ol>
+<li>Create a new directory under <code>benchmarks/</code></li>
+<li>Implement an evaluator function</li>
+<li>Add a <code>prompt.md</code> file with the benchmark prompt</li>
+<li>Update the CLI in <code>run_benchmark.py</code> to include your new benchmark</li>
+</ol>
+<h2>📝 Example Usage</h2>
+<pre><code class="language-bash"># Run the Maze Gauntlet benchmark on a file
+python run_benchmark.py --input sample_llm_output.txt
+
+# Add benchmark results to leaderboard
+python run_benchmark.py --input sample_llm_output.txt --add-to-leaderboard
+
+# Get JSON output
+python run_benchmark.py --input sample_llm_output.txt --json
+
+# Test a specific model from models.txt
+python run_benchmark.py --model google/gemini-2.0-flash-exp:free --benchmark maze
+
+# Test a different model
+python run_benchmark.py --model meta-llama/llama-3.3-70b-instruct:Free --add-to-leaderboard
+
+# Run all models from models.txt
+python run_benchmark.py --run-all --sequential
+</code></pre>
+<p>The output will be a detailed JSON report showing your score breakdown.</p>
+</section>
+
+<section>
+<h2>Source Code</h2>
+<div class="link-list">
+<a href="https://github.com/waifuai/ai-benchmarks">github.com/waifuai/ai-benchmarks</a>
+</div>
+</section>
+
+<footer>
+AI Benchmark Repository &middot; MIT License
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v0.9.2 — Add Logs</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #e6edf3; background: #0d1117; }
+  pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+  code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  th { background: #161b22; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+  blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #8b949e; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; Back to index</a>
+<h1>v0.9.2 — Add Logs</h1>
+<h2>[0.9.2] add logs</h2>
+<h3>Added</h3>
+<ul>
+<li><strong>Comprehensive Logging System</strong>: New timestamped logging functionality for complete benchmark audit trail</li>
+<li>Automatic log file creation in <code>logs/YYYYMMDD-HHMM.txt</code> format (e.g., <code>logs/20251210-0413.txt</code>)</li>
+<li>Complete capture of all benchmark output including <code>[SKIP]</code>, <code>[RUN-ALL]</code>, <code>[TESTING]</code>, <code>[DONE]</code>, <code>[ERROR]</code>, <code>[LIMITED]</code> messages</li>
+<li>Dual output system: messages logged to file AND displayed in console (preserving existing behavior)</li>
+<li>Automatic logging initialization when script starts</li>
+<li>Full leaderboard logging for historical reference</li>
+<li>Enhanced audit trail for model run results with timestamps</li>
+</ul>
+<h3>Functions Added</h3>
+<ul>
+<li><code>setup_logging()</code>: Creates logs directory and timestamped log file</li>
+<li><code>log_message(message)</code>: Unified logging to both file and console</li>
+<li>Modified all core functions to integrate with logging system</li>
+</ul>
+<h3>Improved</h3>
+<ul>
+<li><strong>Debugging &amp; Monitoring</strong>: Complete audit trail of benchmark runs for troubleshooting and analysis</li>
+<li><strong>Historical Tracking</strong>: All model run results preserved in timestamped log files</li>
+<li><strong>Operational Visibility</strong>: Full visibility into batch</li>
+</ul>
+</body>
+</html>

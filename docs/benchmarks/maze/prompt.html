@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maze Benchmark Prompt — Anti-Cheese</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 900px; margin: 0 auto; padding: 2rem; line-height: 1.6; color: #e6edf3; background: #0d1117; }
+  pre { background: #161b22; padding: 1rem; border-radius: 6px; overflow-x: auto; border: 1px solid #30363d; }
+  code { background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+  th { background: #161b22; }
+  a { color: #58a6ff; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  h1, h2, h3 { border-bottom: 1px solid #30363d; padding-bottom: 0.3em; }
+  blockquote { border-left: 4px solid #30363d; padding-left: 1rem; color: #8b949e; }
+  .back-link { display: inline-block; margin-bottom: 1rem; color: #8b949e; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<a class="back-link" href="index.html">&larr; Back to index</a>
+<p>You are an Architect AI in the "Strategic Maze Benchmark."
+Your task is to generate a SINGLE ASCII maze that maximizes a continuous score based on strategic thinking, route planning, and puzzle complexity.</p>
+<p><strong>The Enhanced Scoring Rules:</strong>
+1. <strong>Ambition:</strong> Points for Grid Size + Strategic Elements (<code>100 * log2(Rows * Cols)</code>).
+2. <strong>Strategic Innovation:</strong> +15 points per teleporter pair, +20 per switch, +25 per conditional door used.
+3. <strong>Route Complexity:</strong> Points for requiring backtracking and key collection chains.
+4. <strong>Bonus Objectives:</strong> +75 points per optional exit reachable ('F', 'G', 'H').
+5. <strong>Completion:</strong> +50 Points for reaching End ('E').
+6. <strong>Path Efficiency:</strong> Points for optimizing the path length relative to grid size.
+7. <strong>Strategic Danger:</strong> Limited to 30 points maximum for quality trap placement.</p>
+<p><strong>Strategic Elements &amp; Logic:</strong>
+- <strong>Start/End:</strong> 'S' (Start) and 'E' (End).
+- <strong>Standard Walls:</strong> '#'
+- <strong>Traps:</strong> 'T' (Avoid these).
+- <strong>Teleporters:</strong> 'O' (Entry) -&gt; 'Q' (Exit). One-way instant travel.
+- <strong>Switch:</strong> 's' (lowercase). Toggles state to OPEN 'Y' and 'Z' doors.
+- <strong>Movable Blocks:</strong> 'B' (Counts as a wall, but conceptually movable for puzzle logic).
+- <strong>Bonus Exits:</strong> 'F', 'G', 'H' (Optional targets for extra points).</p>
+<p><strong>Lock &amp; Key System:</strong>
+- <strong>Standard Keys:</strong> Lowercase letters (<code>a</code>, <code>b</code>, <code>c</code>...)
+- <strong>Standard Doors:</strong> Uppercase letters (<code>A</code>, <code>B</code>, <code>C</code>...) -&gt; Require matching key (a-&gt;A).
+- <strong>Conditional Door 'X':</strong> Requires holding at least 2 standard keys to pass.
+- <strong>Conditional Door 'Y':</strong> Requires activating Switch 's' to pass.
+- <strong>Conditional Door 'Z':</strong> Requires BOTH Switch 's' AND at least 1 standard key.</p>
+<p><strong>Strict Constraints:</strong>
+- <strong>Structure:</strong> Walls must outline the valid paths clearly.
+- <strong>Size:</strong> Max 32x32 (for reliable rendering).
+- <strong>Solvability:</strong> The maze MUST be solvable from 'S' to 'E'.
+- <strong>Constraint:</strong> 'S' (Start) and 's' (Switch) are different. Do not confuse them.</p>
+<p><strong>Output Format:</strong>
+- ONLY the maze grid in a markdown code block.
+- Valid chars: '#', ' ', 'S', 'E', 'T', 'a'-'z', 'A'-'Z', 'O', 'Q', 's', 'B', 'F', 'G', 'H', 'X', 'Y', 'Z'.</p>
+<p><strong>Scoring Focus:</strong> Strategic thinking &gt; Trap placement &gt; Size &gt; Path efficiency</p>
+</body>
+</html>
