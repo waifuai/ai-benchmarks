@@ -50,9 +50,11 @@ class OpenRouterClient:
         """Get headers for API requests."""
         return {
             "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
             "HTTP-Referer": "https://waifuai.com",
-            "X-Title": "Waifu AI"
+            "X-OpenRouter-Title": "Waifu AI",
+            "X-Title": "Waifu AI",
+            "X-OpenRouter-Categories": "character-chat",
+            "Content-Type": "application/json"
         }
     
     def generate(
