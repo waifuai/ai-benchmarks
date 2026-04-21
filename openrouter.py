@@ -51,8 +51,8 @@ class OpenRouterClient:
         return {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://github.com/ai-benchmarks",
-            "X-Title": "AI Benchmark Suite"
+            "HTTP-Referer": "https://waifuai.com",
+            "X-Title": "Waifu AI"
         }
     
     def generate(
